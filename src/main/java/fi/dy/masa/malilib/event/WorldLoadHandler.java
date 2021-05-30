@@ -70,18 +70,19 @@ public class WorldLoadHandler implements IWorldLoadManager
     public void onWorldLoadPost(@Nullable ClientWorld worldBefore, @Nullable ClientWorld worldAfter, Minecraft mc)
     {
         // Save all the configs when exiting a world
-        if (worldAfter == null)
+        if (worldBefore != null && worldAfter == null)
         {
             ((ConfigManager) ConfigManager.getInstance()).saveAllConfigs();
         }
         // (Re-)Load all the configs from file when entering a world
-        else if (worldBefore == null)
+        else if (worldBefore == null && worldAfter != null)
         {
             ((ConfigManager) ConfigManager.getInstance()).loadAllConfigs();
             InputEventHandler.getKeybindManager().updateUsedKeys();
         }
 
-        if (this.worldLoadPostHandlers.isEmpty() == false)
+        if (this.worldLoadPostHandlers.isEmpty() == false &&
+            (worldBefore != null || worldAfter != null))
         {
             for (IWorldLoadListener listener : this.worldLoadPostHandlers)
             {
