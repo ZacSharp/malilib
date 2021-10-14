@@ -34,7 +34,7 @@ license="GNU General Public License v3.0"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/malilib" #optional
 
     # A file name (in the root of the mod JAR) containing a logo for display
-    #logoFile="examplemod.png" #optional
+    logoFile="icon.png" #optional
 
     # A text field displayed in the mod UI
     #credits="masa" #optional

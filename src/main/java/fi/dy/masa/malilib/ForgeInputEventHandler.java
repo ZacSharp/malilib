@@ -15,7 +15,17 @@ class ForgeInputEventHandler
         {
             // This event isn't cancellable, and is fired after vanilla key handling >_>
             // So this one needs to be handled with a Mixin
-            ((InputEventHandler) InputEventHandler.getInputManager()).onKeyInput(event.getKey(), event.getScanCode(), event.getModifiers(), event.getAction() != 0);
+            boolean allowRepeat = MaLiLibConfigs.Generic.KEY_EVENT_ALLOW_REPEAT.getBooleanValue();
+            int action = event.getAction();
+
+            if (allowRepeat == false && action == 2)
+            {
+                return;
+            }
+
+            boolean press = action == 1 || (allowRepeat && action == 2);
+
+            ((InputEventHandler) InputEventHandler.getInputManager()).onKeyInput(event.getKey(), event.getScanCode(), event.getModifiers(), press);
         }
     }
 
