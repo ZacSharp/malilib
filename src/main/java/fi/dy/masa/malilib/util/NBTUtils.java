@@ -78,7 +78,7 @@ public class NBTUtils
         {
             ListNBT tagList = tag.getList("Pos", Constants.NBT.TAG_DOUBLE);
 
-            if (tagList.getTagType() == Constants.NBT.TAG_DOUBLE && tagList.size() == 3)
+            if (tagList.getElementType() == Constants.NBT.TAG_DOUBLE && tagList.size() == 3)
             {
                 return new Vector3d(tagList.getDouble(0), tagList.getDouble(1), tagList.getDouble(2));
             }

@@ -32,12 +32,12 @@ public class PacketSplitter
 
     public static void send(ServerPlayNetHandler networkHandler, ResourceLocation channel, PacketBuffer packet)
     {
-        send(packet, MAX_PAYLOAD_PER_PACKET_S2C, buf -> networkHandler.sendPacket(new SCustomPayloadPlayPacket(channel, buf)));
+        send(packet, MAX_PAYLOAD_PER_PACKET_S2C, buf -> networkHandler.send(new SCustomPayloadPlayPacket(channel, buf)));
     }
 
     public static void send(ClientPlayNetHandler networkHandler, ResourceLocation channel, PacketBuffer packet)
     {
-        send(packet, MAX_PAYLOAD_PER_PACKET_C2S, buf -> networkHandler.sendPacket(new CCustomPayloadPacket(channel, buf)));
+        send(packet, MAX_PAYLOAD_PER_PACKET_C2S, buf -> networkHandler.send(new CCustomPayloadPacket(channel, buf)));
     }
 
     private static void send(PacketBuffer packet, int payloadLimit, Consumer<PacketBuffer> sender)
@@ -92,9 +92,9 @@ public class PacketSplitter
     @Nullable
     private static PacketBuffer receive(ClientPlayNetHandler networkHandler, SCustomPayloadPlayPacket message, int maxLength)
     {
-        Pair<INetHandler, ResourceLocation> key = Pair.of(networkHandler, message.getChannelName());
+        Pair<INetHandler, ResourceLocation> key = Pair.of(networkHandler, message.getIdentifier());
 
-        return READING_SESSIONS.computeIfAbsent(key, ReadingSession::new).receive(message.getBufferData(), maxLength);
+        return READING_SESSIONS.computeIfAbsent(key, ReadingSession::new).receive(message.getData(), maxLength);
     }
 
     private static class ReadingSession

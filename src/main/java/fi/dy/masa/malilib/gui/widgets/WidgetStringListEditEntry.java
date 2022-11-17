@@ -84,8 +84,8 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
     protected int addTextField(int x, int y, int resetX, int configWidth, int configHeight, String initialValue)
     {
         GuiTextFieldGeneric field = this.createTextField(x, y + 1, configWidth - 4, configHeight - 3);
-        field.setMaxStringLength(this.maxTextfieldTextLength);
-        field.setText(initialValue);
+        field.setMaxLength(this.maxTextfieldTextLength);
+        field.setValue(initialValue);
 
         ButtonGeneric resetButton = this.createResetButton(resetX, y, field);
         ChangeListenerTextField listenerChange = new ChangeListenerTextField(field, resetButton, this.defaultValue);
@@ -101,7 +101,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
     {
         String labelReset = StringUtils.translate("malilib.gui.button.reset.caps");
         ButtonGeneric resetButton = new ButtonGeneric(x, y, -1, 20, labelReset);
-        resetButton.setEnabled(textField.getText().equals(this.defaultValue) == false);
+        resetButton.setEnabled(textField.getValue().equals(this.defaultValue) == false);
 
         return resetButton;
     }
@@ -109,7 +109,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
     @Override
     public boolean wasConfigModified()
     {
-        return this.isDummy() == false && this.textField.getTextField().getText().equals(this.initialStringValue) == false;
+        return this.isDummy() == false && this.textField.getTextField().getValue().equals(this.initialStringValue) == false;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
         {
             IConfigStringList config = this.parent.getParent().getConfig();
             List<String> list = config.getStrings();
-            String value = this.textField.getTextField().getText();
+            String value = this.textField.getTextField().getValue();
 
             if (list.size() > this.listIndex)
             {
@@ -226,7 +226,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
         @Override
         public boolean onTextChange(GuiTextFieldGeneric textField)
         {
-            this.buttonReset.setEnabled(this.textField.getText().equals(this.defaultValue) == false);
+            this.buttonReset.setEnabled(this.textField.getValue().equals(this.defaultValue) == false);
             return false;
         }
     }
@@ -245,8 +245,8 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
         @Override
         public void actionPerformedWithButton(ButtonBase button, int mouseButton)
         {
-            this.parent.textField.getTextField().setText(this.parent.defaultValue);
-            this.buttonReset.setEnabled(this.parent.textField.getTextField().getText().equals(this.parent.defaultValue) == false);
+            this.parent.textField.getTextField().setValue(this.parent.defaultValue);
+            this.buttonReset.setEnabled(this.parent.textField.getTextField().getValue().equals(this.parent.defaultValue) == false);
         }
     }
 

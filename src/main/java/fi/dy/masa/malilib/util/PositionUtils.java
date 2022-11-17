@@ -74,7 +74,7 @@ public class PositionUtils
 
     public static BlockPos getEntityBlockPos(Entity entity)
     {
-        return new BlockPos(Math.floor(entity.getPosX()), Math.floor(entity.getPosY()), Math.floor(entity.getPosZ()));
+        return new BlockPos(Math.floor(entity.getX()), Math.floor(entity.getY()), Math.floor(entity.getZ()));
     }
 
     /**
@@ -96,16 +96,16 @@ public class PositionUtils
      */
     public static Direction getClosestLookingDirection(Entity entity, float verticalThreshold)
     {
-        if (entity.rotationPitch >= verticalThreshold)
+        if (entity.xRot >= verticalThreshold)
         {
             return Direction.DOWN;
         }
-        else if (entity.rotationPitch <= -verticalThreshold)
+        else if (entity.xRot <= -verticalThreshold)
         {
             return Direction.UP;
         }
 
-        return entity.getHorizontalFacing();
+        return entity.getDirection();
     }
 
     /**
@@ -128,24 +128,24 @@ public class PositionUtils
      */
     public static BlockPos getPositionInfrontOfEntity(Entity entity, float verticalThreshold)
     {
-        double x = entity.getPosX();
-        double y = entity.getPosY();
-        double z = entity.getPosZ();
-        double w = entity.getWidth();
+        double x = entity.getX();
+        double y = entity.getY();
+        double z = entity.getZ();
+        double w = entity.getBbWidth();
         BlockPos pos = new BlockPos(x, y, z);
 
-        if (entity.rotationPitch >= verticalThreshold)
+        if (entity.xRot >= verticalThreshold)
         {
-            return pos.down(1);
+            return pos.below(1);
         }
-        else if (entity.rotationPitch <= -verticalThreshold)
+        else if (entity.xRot <= -verticalThreshold)
         {
             return new BlockPos(x, Math.ceil(entity.getBoundingBox().maxY), z);
         }
 
         y = Math.floor(y + entity.getEyeHeight());
 
-        switch (entity.getHorizontalFacing())
+        switch (entity.getDirection())
         {
             case EAST:
                 return new BlockPos((int) Math.ceil( x + w / 2),     (int) y, (int) Math.floor(z));
@@ -295,7 +295,7 @@ public class PositionUtils
             {
                 if (offH > offV)
                 {
-                    return posH < 0.5d ? playerFacingH.rotateYCCW() : playerFacingH.rotateY();
+                    return posH < 0.5d ? playerFacingH.getCounterClockWise() : playerFacingH.getClockWise();
                 }
                 else
                 {
@@ -313,7 +313,7 @@ public class PositionUtils
             {
                 if (offH > offV)
                 {
-                    return posH < 0.5d ? side.rotateY() : side.rotateYCCW();
+                    return posH < 0.5d ? side.getClockWise() : side.getCounterClockWise();
                 }
                 else
                 {

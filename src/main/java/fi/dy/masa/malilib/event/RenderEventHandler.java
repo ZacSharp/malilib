@@ -54,23 +54,23 @@ public class RenderEventHandler implements IRenderDispatcher
      */
     public void onRenderGameOverlayPost(net.minecraft.client.Minecraft mc, float partialTicks, MatrixStack matrixStack)
     {
-        mc.getProfiler().startSection("malilib_rendergameoverlaypost");
+        mc.getProfiler().push("malilib_rendergameoverlaypost");
 
         if (this.overlayRenderers.isEmpty() == false)
         {
             for (IRenderer renderer : this.overlayRenderers)
             {
-                mc.getProfiler().startSection(renderer.getProfilerSectionSupplier());
+                mc.getProfiler().push(renderer.getProfilerSectionSupplier());
                 renderer.onRenderGameOverlayPost(partialTicks, matrixStack);
-                mc.getProfiler().endSection();
+                mc.getProfiler().pop();
             }
         }
 
-        mc.getProfiler().startSection("malilib_ingamemessages");
+        mc.getProfiler().push("malilib_ingamemessages");
         InfoUtils.renderInGameMessages(matrixStack);
-        mc.getProfiler().endSection();
+        mc.getProfiler().pop();
 
-        mc.getProfiler().endSection();
+        mc.getProfiler().pop();
     }
 
     /**
@@ -94,25 +94,25 @@ public class RenderEventHandler implements IRenderDispatcher
     {
         if (this.worldLastRenderers.isEmpty() == false)
         {
-            mc.getProfiler().endStartSection("malilib_renderworldlast");
+            mc.getProfiler().popPush("malilib_renderworldlast");
 
-            Framebuffer fb = Minecraft.isFabulousGraphicsEnabled() ? mc.worldRenderer.getTranslucentFrameBuffer() : null;
+            Framebuffer fb = Minecraft.useShaderTransparency() ? mc.levelRenderer.getTranslucentTarget() : null;
 
             if (fb != null)
             {
-                fb.bindFramebuffer(false);
+                fb.bindWrite(false);
             }
 
             for (IRenderer renderer : this.worldLastRenderers)
             {
-                mc.getProfiler().startSection(renderer.getProfilerSectionSupplier());
+                mc.getProfiler().push(renderer.getProfilerSectionSupplier());
                 renderer.onRenderWorldLast(partialTicks, matrixStack);
-                mc.getProfiler().endSection();
+                mc.getProfiler().pop();
             }
 
             if (fb != null)
             {
-                mc.getFramebuffer().bindFramebuffer(false);
+                mc.getMainRenderTarget().bindWrite(false);
             }
         }
     }

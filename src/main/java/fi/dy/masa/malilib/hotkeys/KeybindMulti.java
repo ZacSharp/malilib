@@ -174,7 +174,7 @@ public class KeybindMulti implements IKeybind
             if (this.keyCodes.contains(KeyCodes.KEY_F3))
             {
                 // Prevent the debug GUI from opening after the F3 key is released
-                ((IF3KeyStateSetter) Minecraft.getInstance().keyboardListener).setF3KeyState(true);
+                ((IF3KeyStateSetter) Minecraft.getInstance().keyboardHandler).setF3KeyState(true);
             }
 
             KeyAction activateOn = this.settings.getActivateOn();
@@ -327,8 +327,8 @@ public class KeybindMulti implements IKeybind
 
     public static int getKeyCode(KeyBinding keybind)
     {
-        InputMappings.Input input = InputMappings.getInputByName(keybind.getTranslationKey());
-        return input.getType() == InputMappings.Type.MOUSE ? input.getKeyCode() - 100 : input.getKeyCode();
+        InputMappings.Input input = InputMappings.getKey(keybind.saveString());
+        return input.getType() == InputMappings.Type.MOUSE ? input.getValue() - 100 : input.getValue();
     }
 
     public static boolean hotkeyMatchesKeybind(IHotkey hotkey, KeyBinding keybind)
@@ -410,7 +410,7 @@ public class KeybindMulti implements IKeybind
 
     public static boolean isKeyDown(int keyCode)
     {
-        long window = Minecraft.getInstance().getMainWindow().getHandle();
+        long window = Minecraft.getInstance().getWindow().getWindow();
 
         if (keyCode >= 0)
         {

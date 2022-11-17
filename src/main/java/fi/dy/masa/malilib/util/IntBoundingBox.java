@@ -55,7 +55,7 @@ public class IntBoundingBox
 
     public static IntBoundingBox fromVanillaBox(MutableBoundingBox box)
     {
-        return createProper(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+        return createProper(box.x0, box.y0, box.z0, box.x1, box.y1, box.z1);
     }
 
     public static IntBoundingBox createProper(int x1, int y1, int z1, int x2, int y2, int z2)

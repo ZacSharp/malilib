@@ -14,7 +14,7 @@ public class EntityUtils
     public static Entity getCameraEntity()
     {
         Minecraft mc = Minecraft.getInstance();
-        Entity entity = mc.getRenderViewEntity();
+        Entity entity = mc.getCameraEntity();
 
         if (entity == null)
         {

@@ -18,6 +18,6 @@ public class GuiTextInputFeedback extends GuiTextInputBase
     @Override
     protected boolean applyValue(String string)
     {
-        return this.consumer.setString(this.textField.getText());
+        return this.consumer.setString(this.textField.getValue());
     }
 }

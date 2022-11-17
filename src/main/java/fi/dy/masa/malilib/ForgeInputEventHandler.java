@@ -11,7 +11,7 @@ class ForgeInputEventHandler
     @SubscribeEvent
     public void onKeyboardInput(InputEvent.KeyInputEvent event)
     {
-        if (Minecraft.getInstance().currentScreen == null)
+        if (Minecraft.getInstance().screen == null)
         {
             // This event isn't cancellable, and is fired after vanilla key handling >_>
             // So this one needs to be handled with a Mixin
@@ -25,7 +25,7 @@ class ForgeInputEventHandler
         int mouseX = 0;
         int mouseY = 0;
 
-        if (Minecraft.getInstance().currentScreen == null &&
+        if (Minecraft.getInstance().screen == null &&
             ((InputEventHandler) InputEventHandler.getInputManager()).onMouseClick(mouseX, mouseY, event.getButton(), event.getAction() != 0))
         {
             event.setCanceled(true);

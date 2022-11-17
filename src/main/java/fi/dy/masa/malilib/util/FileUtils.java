@@ -18,12 +18,12 @@ public class FileUtils
 
     public static File getConfigDirectory()
     {
-        return new File(Minecraft.getInstance().gameDir, "config");
+        return new File(Minecraft.getInstance().gameDirectory, "config");
     }
 
     public static File getMinecraftDirectory()
     {
-        return Minecraft.getInstance().gameDir;
+        return Minecraft.getInstance().gameDirectory;
     }
 
     /**

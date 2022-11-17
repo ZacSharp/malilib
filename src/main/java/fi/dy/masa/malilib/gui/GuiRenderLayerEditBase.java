@@ -116,12 +116,12 @@ public abstract class GuiRenderLayerEditBase extends GuiBase
     {
         if (this.textField1 != null)
         {
-            this.textField1.setText(String.valueOf(layerRange.getCurrentLayerValue(false)));
+            this.textField1.setValue(String.valueOf(layerRange.getCurrentLayerValue(false)));
         }
 
         if (this.textField2 != null)
         {
-            this.textField2.setText(String.valueOf(layerRange.getCurrentLayerValue(true)));
+            this.textField2.setValue(String.valueOf(layerRange.getCurrentLayerValue(true)));
         }
     }
 
@@ -266,7 +266,7 @@ public abstract class GuiRenderLayerEditBase extends GuiBase
 
             try
             {
-                value = Integer.parseInt(textField.getText());
+                value = Integer.parseInt(textField.getValue());
             }
             catch (NumberFormatException e)
             {

@@ -28,9 +28,9 @@ public abstract class GuiTextInputBase extends GuiDialogBase
 
         int width = Math.min(maxTextLength * 10, 240);
         this.textField = new GuiTextFieldGeneric(this.dialogLeft + 12, this.dialogTop + 40, width, 20, this.textRenderer);
-        this.textField.setMaxStringLength(maxTextLength);
+        this.textField.setMaxLength(maxTextLength);
         this.textField.setFocused(true);
-        this.textField.setText(this.originalText);
+        this.textField.setValue(this.originalText);
         this.setBlitOffset(1);
     }
 
@@ -44,7 +44,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
         x += this.createButton(x, y, ButtonType.RESET) + 2;
         x += this.createButton(x, y, ButtonType.CANCEL) + 2;
 
-        this.mc.keyboardListener.enableRepeatEvents(true);
+        this.mc.keyboardHandler.setSendRepeatsToGui(true);
     }
 
     protected int createButton(int x, int y, ButtonType type)
@@ -89,7 +89,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
         if (keyCode == KeyCodes.KEY_ENTER)
         {
             // Only close the GUI if the value was successfully applied
-            if (this.applyValue(this.textField.getText()))
+            if (this.applyValue(this.textField.getValue()))
             {
                 GuiBase.openGui(this.getParent());
             }
@@ -156,7 +156,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
             if (this.type == ButtonType.OK)
             {
                 // Only close the GUI if the value was successfully applied
-                if (this.gui.applyValue(this.gui.textField.getText()))
+                if (this.gui.applyValue(this.gui.textField.getValue()))
                 {
                     GuiBase.openGui(this.gui.getParent());
                 }
@@ -167,7 +167,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
             }
             else if (this.type == ButtonType.RESET)
             {
-                this.gui.textField.setText(this.gui.originalText);
+                this.gui.textField.setValue(this.gui.originalText);
                 this.gui.textField.setFocused(true);
             }
         }

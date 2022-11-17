@@ -24,8 +24,8 @@ public abstract class WidgetBase
         this.width = width;
         this.height = height;
         this.mc = Minecraft.getInstance();
-        this.textRenderer = this.mc.fontRenderer;
-        this.fontHeight = this.textRenderer.FONT_HEIGHT;
+        this.textRenderer = this.mc.font;
+        this.fontHeight = this.textRenderer.lineHeight;
     }
 
     public int getX()
@@ -159,27 +159,27 @@ public abstract class WidgetBase
 
     public int getStringWidth(String text)
     {
-        return this.textRenderer.getStringWidth(text);
+        return this.textRenderer.width(text);
     }
 
     public void drawString(int x, int y, int color, String text, MatrixStack matrixStack)
     {
-        this.textRenderer.drawString(matrixStack, text, x, y, color);
+        this.textRenderer.draw(matrixStack, text, x, y, color);
     }
 
     public void drawCenteredString(int x, int y, int color, String text, MatrixStack matrixStack)
     {
-        this.textRenderer.drawString(matrixStack, text, x - this.getStringWidth(text) / 2, y, color);
+        this.textRenderer.draw(matrixStack, text, x - this.getStringWidth(text) / 2, y, color);
     }
 
     public void drawStringWithShadow(int x, int y, int color, String text, MatrixStack matrixStack)
     {
-        this.textRenderer.drawStringWithShadow(matrixStack, text, x, y, color);
+        this.textRenderer.drawShadow(matrixStack, text, x, y, color);
     }
 
     public void drawCenteredStringWithShadow(int x, int y, int color, String text, MatrixStack matrixStack)
     {
-        this.textRenderer.drawStringWithShadow(matrixStack, text, x - this.getStringWidth(text) / 2, y, color);
+        this.textRenderer.drawShadow(matrixStack, text, x - this.getStringWidth(text) / 2, y, color);
     }
 
     public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)

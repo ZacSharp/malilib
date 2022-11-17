@@ -45,7 +45,7 @@ public class BlockUtils
     public static Direction getFirstPropertyFacingValue(BlockState state)
     {
         DirectionProperty prop = getFirstDirectionProperty(state);
-        return prop != null ? state.get(prop) : null;
+        return prop != null ? state.getValue(prop) : null;
     }
 
     public static List<String> getFormattedBlockStateProperties(BlockState state)
@@ -63,7 +63,7 @@ public class BlockUtils
 
             for (Property<?> prop : properties)
             {
-                Comparable<?> val = state.get(prop);
+                Comparable<?> val = state.getValue(prop);
 
                 if (prop instanceof BooleanProperty)
                 {

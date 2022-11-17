@@ -21,28 +21,28 @@ public class GuiUtils
 {
     public static int getScaledWindowWidth()
     {
-        return Minecraft.getInstance().getMainWindow().getScaledWidth();
+        return Minecraft.getInstance().getWindow().getGuiScaledWidth();
     }
 
     public static int getScaledWindowHeight()
     {
-        return Minecraft.getInstance().getMainWindow().getScaledHeight();
+        return Minecraft.getInstance().getWindow().getGuiScaledHeight();
     }
 
     public static int getDisplayWidth()
     {
-        return Minecraft.getInstance().getMainWindow().getWidth();
+        return Minecraft.getInstance().getWindow().getScreenWidth();
     }
 
     public static int getDisplayHeight()
     {
-        return Minecraft.getInstance().getMainWindow().getHeight();
+        return Minecraft.getInstance().getWindow().getScreenHeight();
     }
 
     @Nullable
     public static Screen getCurrentScreen()
     {
-        return Minecraft.getInstance().currentScreen;
+        return Minecraft.getInstance().screen;
     }
 
     public static void createBlockPosInputsVertical(int x, int y, int textFieldWidth, BlockPos pos,
@@ -66,8 +66,8 @@ public class GuiUtils
     {
         x = addLabel(x, y, type, gui);
 
-        GuiTextFieldInteger textField = new GuiTextFieldInteger(x, y + 1, textFieldWidth, 14, Minecraft.getInstance().fontRenderer);
-        textField.setText(getCoordinateValueString(type, pos));
+        GuiTextFieldInteger textField = new GuiTextFieldInteger(x, y + 1, textFieldWidth, 14, Minecraft.getInstance().font);
+        textField.setValue(getCoordinateValueString(type, pos));
 
         addTextFieldAndButton(x + textFieldWidth + 4, y, type, modifier, textField, addButton, gui);
     }
@@ -77,8 +77,8 @@ public class GuiUtils
     {
         x = addLabel(x, y, type, gui);
 
-        GuiTextFieldDouble textField = new GuiTextFieldDouble(x, y + 1, textFieldWidth, 14, Minecraft.getInstance().fontRenderer);
-        textField.setText(getCoordinateValueString(type, pos));
+        GuiTextFieldDouble textField = new GuiTextFieldDouble(x, y + 1, textFieldWidth, 14, Minecraft.getInstance().font);
+        textField.setValue(getCoordinateValueString(type, pos));
 
         addTextFieldAndButton(x + textFieldWidth + 4, y, type, modifier, textField, addButton, gui);
     }
@@ -156,7 +156,7 @@ public class GuiUtils
         @Override
         public boolean onTextChange(GuiTextFieldGeneric textField)
         {
-            this.modifier.setValueFromString(this.type, textField.getText());
+            this.modifier.setValueFromString(this.type, textField.getValue());
 
             return false;
         }

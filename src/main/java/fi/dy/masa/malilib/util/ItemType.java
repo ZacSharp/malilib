@@ -81,7 +81,7 @@ public class ItemType
                 return false;
             }
 
-            return this.checkNBT() == false || ItemStack.areItemStackTagsEqual(this.stack, other.stack);
+            return this.checkNBT() == false || ItemStack.tagMatches(this.stack, other.stack);
         }
 
         return true;

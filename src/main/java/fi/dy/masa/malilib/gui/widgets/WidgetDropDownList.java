@@ -159,7 +159,7 @@ public class WidgetDropDownList<T> extends WidgetBase
 
             if (this.isOpen == false)
             {
-                this.searchBar.getTextField().setText("");
+                this.searchBar.getTextField().setValue("");
                 this.updateFilteredEntries();
             }
         }
@@ -210,7 +210,7 @@ public class WidgetDropDownList<T> extends WidgetBase
     protected void updateFilteredEntries()
     {
         this.filteredEntries.clear();
-        String filterText = this.searchBar.getTextField().getText();
+        String filterText = this.searchBar.getTextField().getValue();
 
         if (this.isOpen && filterText.isEmpty() == false)
         {
@@ -275,7 +275,7 @@ public class WidgetDropDownList<T> extends WidgetBase
 
         if (this.isOpen)
         {
-            if (this.searchBar.getTextField().getText().isEmpty() == false)
+            if (this.searchBar.getTextField().getValue().isEmpty() == false)
             {
                 this.searchBar.draw(mouseX, mouseY, matrixStack);
             }

@@ -76,7 +76,7 @@ public class ConfigOptionListenerResetConfig implements IButtonActionListener
         @Override
         public void resetConfigOption()
         {
-            this.textField.setText(this.config.getStringValue());
+            this.textField.setValue(this.config.getStringValue());
         }
     }
 }

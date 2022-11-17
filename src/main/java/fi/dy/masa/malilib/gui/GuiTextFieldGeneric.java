@@ -23,7 +23,7 @@ public class GuiTextFieldGeneric extends TextFieldWidget
         this.width = width;
         this.height = height;
 
-        this.setMaxStringLength(256);
+        this.setMaxLength(256);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class GuiTextFieldGeneric extends TextFieldWidget
 
         if (mouseButton == 1 && this.isMouseOver((int) mouseX, (int) mouseY))
         {
-            this.setText("");
+            this.setValue("");
             this.setFocused(true);
             return true;
         }
@@ -75,7 +75,7 @@ public class GuiTextFieldGeneric extends TextFieldWidget
 
         if (this.isFocused() != wasFocused)
         {
-            Minecraft.getInstance().keyboardListener.enableRepeatEvents(this.isFocused());
+            Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(this.isFocused());
         }
     }
 

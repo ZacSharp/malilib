@@ -36,7 +36,7 @@ public abstract class WidgetConfigOptionBase<TYPE> extends WidgetListEntryBase<T
     {
         if (this.textField != null)
         {
-            return this.textField.getTextField().getText().equals(this.lastAppliedValue) == false;
+            return this.textField.getTextField().getValue().equals(this.lastAppliedValue) == false;
         }
 
         return false;

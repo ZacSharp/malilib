@@ -67,7 +67,7 @@ public abstract class WidgetListBase<TYPE, WIDGET extends WidgetListEntryBase<TY
     {
         super.initGui();
 
-        this.mc.keyboardListener.enableRepeatEvents(true);
+        this.mc.keyboardHandler.setSendRepeatsToGui(true);
         this.refreshEntries();
     }
 

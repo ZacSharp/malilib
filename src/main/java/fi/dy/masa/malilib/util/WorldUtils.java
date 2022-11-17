@@ -12,7 +12,7 @@ public class WorldUtils
 {
     public static String getDimensionId(World world)
     {
-        ResourceLocation id = world.getDimensionKey().getLocation();
+        ResourceLocation id = world.dimension().location();
         return id != null ? id.getNamespace() + "_" + id.getPath() : "__fallback";
     }
 
@@ -25,15 +25,15 @@ public class WorldUtils
     @Nullable
     public static World getBestWorld(Minecraft mc)
     {
-        IntegratedServer server = mc.getIntegratedServer();
+        IntegratedServer server = mc.getSingleplayerServer();
 
-        if (mc.world != null && server != null)
+        if (mc.level != null && server != null)
         {
-            return server.getWorld(mc.world.getDimensionKey());
+            return server.getLevel(mc.level.dimension());
         }
         else
         {
-            return mc.world;
+            return mc.level;
         }
     }
 
@@ -48,12 +48,12 @@ public class WorldUtils
     @Nullable
     public static Chunk getBestChunk(int chunkX, int chunkZ, Minecraft mc)
     {
-        IntegratedServer server = mc.getIntegratedServer();
+        IntegratedServer server = mc.getSingleplayerServer();
         Chunk chunk = null;
 
-        if (mc.world != null && server != null)
+        if (mc.level != null && server != null)
         {
-            ServerWorld world = server.getWorld(mc.world.getDimensionKey());
+            ServerWorld world = server.getLevel(mc.level.dimension());
 
             if (world != null)
             {
@@ -66,6 +66,6 @@ public class WorldUtils
             return chunk;
         }
 
-        return mc.world != null ? mc.world.getChunk(chunkX, chunkZ) : null;
+        return mc.level != null ? mc.level.getChunk(chunkX, chunkZ) : null;
     }
 }

@@ -77,12 +77,12 @@ public class StringUtils
     public static void sendOpenFileChatMessage(net.minecraft.entity.Entity sender, String messageKey, File file)
     {
         net.minecraft.util.text.ITextComponent name = (new net.minecraft.util.text.StringTextComponent(file.getName()))
-            .mergeStyle(net.minecraft.util.text.TextFormatting.UNDERLINE)
-            .modifyStyle((style) -> {
-                return style.setClickEvent(new net.minecraft.util.text.event.ClickEvent(net.minecraft.util.text.event.ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
+            .withStyle(net.minecraft.util.text.TextFormatting.UNDERLINE)
+            .withStyle((style) -> {
+                return style.withClickEvent(new net.minecraft.util.text.event.ClickEvent(net.minecraft.util.text.event.ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
             });
 
-        sender.sendMessage(new net.minecraft.util.text.TranslationTextComponent(messageKey, name), sender.getUniqueID());
+        sender.sendMessage(new net.minecraft.util.text.TranslationTextComponent(messageKey, name), sender.getUUID());
     }
 
     /**
@@ -276,15 +276,15 @@ public class StringUtils
     {
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
 
-        if (mc.isIntegratedServerRunning())
+        if (mc.isLocalServer())
         {
-            net.minecraft.server.integrated.IntegratedServer server = mc.getIntegratedServer();
+            net.minecraft.server.integrated.IntegratedServer server = mc.getSingleplayerServer();
 
             if (server != null)
             {
                 // This used to be just MinecraftServer::getLevelName().
                 // Getting the name would now require an @Accessor for MinecraftServer.field_23784
-                return server.getServerConfiguration().getWorldName(); 
+                return server.getWorldData().getLevelName(); 
             }
         }
         else
@@ -298,7 +298,7 @@ public class StringUtils
                 else
                 {
                     net.minecraft.client.network.play.ClientPlayNetHandler handler = mc.getConnection();
-                    net.minecraft.network.NetworkManager connection = handler != null ? handler.getNetworkManager() : null;
+                    net.minecraft.network.NetworkManager connection = handler != null ? handler.getConnection() : null;
 
                     if (connection != null)
                     {
@@ -307,11 +307,11 @@ public class StringUtils
                 }
             }
 
-            net.minecraft.client.multiplayer.ServerData server = mc.getCurrentServerData();
+            net.minecraft.client.multiplayer.ServerData server = mc.getCurrentServer();
 
             if (server != null)
             {
-                return server.serverIP.replace(':', '_');
+                return server.ip.replace(':', '_');
             }
         }
 
@@ -338,7 +338,7 @@ public class StringUtils
                 return prefix + name + suffix;
             }
 
-            net.minecraft.world.World world = net.minecraft.client.Minecraft.getInstance().world;
+            net.minecraft.world.World world = net.minecraft.client.Minecraft.getInstance().level;
 
             if (world != null)
             {
@@ -371,7 +371,7 @@ public class StringUtils
      */
     public static String translate(String translationKey, Object... args)
     {
-        return net.minecraft.client.resources.I18n.format(translationKey, args);
+        return net.minecraft.client.resources.I18n.get(translationKey, args);
     }
 
     /**
@@ -380,16 +380,16 @@ public class StringUtils
      */
     public static int getFontHeight()
     {
-        return net.minecraft.client.Minecraft.getInstance().fontRenderer.FONT_HEIGHT;
+        return net.minecraft.client.Minecraft.getInstance().font.lineHeight;
     }
 
     public static int getStringWidth(String text)
     {
-        return net.minecraft.client.Minecraft.getInstance().fontRenderer.getStringWidth(text);
+        return net.minecraft.client.Minecraft.getInstance().font.width(text);
     }
 
     public static void drawString(int x, int y, int color, String text, MatrixStack matrixStack)
     {
-        net.minecraft.client.Minecraft.getInstance().fontRenderer.drawString(matrixStack, text, x, y, color);
+        net.minecraft.client.Minecraft.getInstance().font.draw(matrixStack, text, x, y, color);
     }
 }

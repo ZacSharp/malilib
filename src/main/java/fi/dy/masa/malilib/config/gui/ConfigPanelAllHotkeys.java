@@ -8,6 +8,8 @@ import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.hotkeys.KeybindCategory;
 
+import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
+
 public class ConfigPanelAllHotkeys extends GuiModConfigs
 {
     public ConfigPanelAllHotkeys()

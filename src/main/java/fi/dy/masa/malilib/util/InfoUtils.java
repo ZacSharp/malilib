@@ -143,7 +143,7 @@ public class InfoUtils
 
         if (mc.player != null)
         {
-            mc.ingameGUI.sendChatMessage(ChatType.GAME_INFO, new TranslationTextComponent(key, args), mc.player.getUniqueID());
+            mc.gui.handleChat(ChatType.GAME_INFO, new TranslationTextComponent(key, args), mc.player.getUUID());
         }
     }
 
@@ -199,7 +199,7 @@ public class InfoUtils
 
             if (mc.player != null)
             {
-                mc.ingameGUI.sendChatMessage(ChatType.GAME_INFO, new TranslationTextComponent(string), mc.player.getUniqueID());
+                mc.gui.handleChat(ChatType.GAME_INFO, new TranslationTextComponent(string), mc.player.getUUID());
             }
         }
     }

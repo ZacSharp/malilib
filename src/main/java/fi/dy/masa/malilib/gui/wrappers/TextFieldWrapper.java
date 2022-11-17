@@ -61,13 +61,13 @@ public class TextFieldWrapper<T extends GuiTextFieldGeneric>
 
     public boolean onKeyTyped(int keyCode, int scanCode, int modifiers)
     {
-        String textPre = this.textField.getText();
+        String textPre = this.textField.getValue();
 
         if (this.textField.isFocused() && this.textField.keyPressed(keyCode, scanCode, modifiers))
         {
             if (this.listener != null &&
                 (keyCode == KeyCodes.KEY_ENTER || keyCode == KeyCodes.KEY_TAB ||
-                 this.textField.getText().equals(textPre) == false))
+                 this.textField.getValue().equals(textPre) == false))
             {
                 this.listener.onTextChange(this.textField);
             }
@@ -80,11 +80,11 @@ public class TextFieldWrapper<T extends GuiTextFieldGeneric>
 
     public boolean onCharTyped(char charIn, int modifiers)
     {
-        String textPre = this.textField.getText();
+        String textPre = this.textField.getValue();
 
         if (this.textField.isFocused() && this.textField.charTyped(charIn, modifiers))
         {
-            if (this.listener != null && this.textField.getText().equals(textPre) == false)
+            if (this.listener != null && this.textField.getValue().equals(textPre) == false)
             {
                 this.listener.onTextChange(this.textField);
             }

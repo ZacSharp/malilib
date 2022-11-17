@@ -59,7 +59,7 @@ public class InventoryOverlay
     public static void renderInventoryBackground(InventoryRenderType type, int x, int y, int slotsPerRow, int totalSlots, Minecraft mc)
     {
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuilder();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         if (type == InventoryRenderType.FURNACE)
@@ -145,7 +145,7 @@ public class InventoryOverlay
             }
         }
 
-        tessellator.draw();
+        tessellator.end();
     }
 
     public static void renderInventoryBackground27(int x, int y, BufferBuilder buffer, Minecraft mc)
@@ -173,7 +173,7 @@ public class InventoryOverlay
         RenderUtils.color(1f, 1f, 1f, 1f);
 
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuilder();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         RenderUtils.bindTexture(TEXTURE_DISPENSER);
@@ -192,24 +192,24 @@ public class InventoryOverlay
         RenderUtils.drawTexturedRectBatched(x + 28, y + 2 * 18 + 7, 61, 16, 18, 18, buffer);
         RenderUtils.drawTexturedRectBatched(x + 28, y + 3 * 18 + 7, 61, 16, 18, 18, buffer);
 
-        tessellator.draw();
+        tessellator.end();
 
-        RenderUtils.bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
+        RenderUtils.bindTexture(PlayerContainer.BLOCK_ATLAS);
 
-        if (entity.getItemStackFromSlot(EquipmentSlotType.OFFHAND).isEmpty())
+        if (entity.getItemBySlot(EquipmentSlotType.OFFHAND).isEmpty())
         {
             ResourceLocation texture = new ResourceLocation("minecraft:item/empty_armor_slot_shield");
-            RenderUtils.renderSprite(x + 28 + 1, y + 3 * 18 + 7 + 1, 16, 16, PlayerContainer.LOCATION_BLOCKS_TEXTURE, texture, matrixStack);
+            RenderUtils.renderSprite(x + 28 + 1, y + 3 * 18 + 7 + 1, 16, 16, PlayerContainer.BLOCK_ATLAS, texture, matrixStack);
         }
 
         for (int i = 0, xOff = 7, yOff = 7; i < 4; ++i, yOff += 18)
         {
             final EquipmentSlotType eqSlot = VALID_EQUIPMENT_SLOTS[i];
 
-            if (entity.getItemStackFromSlot(eqSlot).isEmpty())
+            if (entity.getItemBySlot(eqSlot).isEmpty())
             {
                 ResourceLocation texture = EMPTY_SLOT_TEXTURES[eqSlot.getIndex()];
-                RenderUtils.renderSprite(x + xOff + 1, y + yOff + 1, 16, 16, PlayerContainer.LOCATION_BLOCKS_TEXTURE, texture, matrixStack);
+                RenderUtils.renderSprite(x + xOff + 1, y + yOff + 1, 16, 16, PlayerContainer.BLOCK_ATLAS, texture, matrixStack);
             }
         }
     }
@@ -370,21 +370,21 @@ public class InventoryOverlay
     {
         if (type == InventoryRenderType.FURNACE)
         {
-            renderStackAt(inv.getStackInSlot(0), startX +   8, startY +  8, 1, mc);
-            renderStackAt(inv.getStackInSlot(1), startX +   8, startY + 44, 1, mc);
-            renderStackAt(inv.getStackInSlot(2), startX +  68, startY + 26, 1, mc);
+            renderStackAt(inv.getItem(0), startX +   8, startY +  8, 1, mc);
+            renderStackAt(inv.getItem(1), startX +   8, startY + 44, 1, mc);
+            renderStackAt(inv.getItem(2), startX +  68, startY + 26, 1, mc);
         }
         else if (type == InventoryRenderType.BREWING_STAND)
         {
-            renderStackAt(inv.getStackInSlot(0), startX +  47, startY + 42, 1, mc);
-            renderStackAt(inv.getStackInSlot(1), startX +  70, startY + 49, 1, mc);
-            renderStackAt(inv.getStackInSlot(2), startX +  93, startY + 42, 1, mc);
-            renderStackAt(inv.getStackInSlot(3), startX +  70, startY +  8, 1, mc);
-            renderStackAt(inv.getStackInSlot(4), startX +   8, startY +  8, 1, mc);
+            renderStackAt(inv.getItem(0), startX +  47, startY + 42, 1, mc);
+            renderStackAt(inv.getItem(1), startX +  70, startY + 49, 1, mc);
+            renderStackAt(inv.getItem(2), startX +  93, startY + 42, 1, mc);
+            renderStackAt(inv.getItem(3), startX +  70, startY +  8, 1, mc);
+            renderStackAt(inv.getItem(4), startX +   8, startY +  8, 1, mc);
         }
         else
         {
-            final int slots = inv.getSizeInventory();
+            final int slots = inv.getContainerSize();
             int x = startX;
             int y = startY;
 
@@ -397,7 +397,7 @@ public class InventoryOverlay
             {
                 for (int column = 0; column < slotsPerRow && slot < slots && i < maxSlots; ++column, ++slot, ++i)
                 {
-                    ItemStack stack = inv.getStackInSlot(slot);
+                    ItemStack stack = inv.getItem(slot);
 
                     if (stack.isEmpty() == false)
                     {
@@ -418,7 +418,7 @@ public class InventoryOverlay
         for (int i = 0, xOff = 7, yOff = 7; i < 4; ++i, yOff += 18)
         {
             final EquipmentSlotType eqSlot = VALID_EQUIPMENT_SLOTS[i];
-            ItemStack stack = entity.getItemStackFromSlot(eqSlot);
+            ItemStack stack = entity.getItemBySlot(eqSlot);
 
             if (stack.isEmpty() == false)
             {
@@ -426,14 +426,14 @@ public class InventoryOverlay
             }
         }
 
-        ItemStack stack = entity.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+        ItemStack stack = entity.getItemBySlot(EquipmentSlotType.MAINHAND);
 
         if (stack.isEmpty() == false)
         {
             renderStackAt(stack, x + 28, y + 2 * 18 + 7 + 1, 1, mc);
         }
 
-        stack = entity.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
+        stack = entity.getItemBySlot(EquipmentSlotType.OFFHAND);
 
         if (stack.isEmpty() == false)
         {
@@ -482,12 +482,12 @@ public class InventoryOverlay
         RenderUtils.enableDiffuseLightingGui3D();
         RenderUtils.color(1f, 1f, 1f, 1f);
 
-        mc.getItemRenderer().zLevel += 100;
-        mc.getItemRenderer().renderItemAndEffectIntoGUI(stack, 0, 0);
+        mc.getItemRenderer().blitOffset += 100;
+        mc.getItemRenderer().renderAndDecorateItem(stack, 0, 0);
 
         RenderUtils.color(1f, 1f, 1f, 1f);
-        mc.getItemRenderer().renderItemOverlayIntoGUI(mc.fontRenderer, stack, 0, 0, null);
-        mc.getItemRenderer().zLevel -= 100;
+        mc.getItemRenderer().renderGuiItemDecorations(mc.font, stack, 0, 0, null);
+        mc.getItemRenderer().blitOffset -= 100;
 
         RenderUtils.disableDiffuseLighting();
         RenderSystem.popMatrix();
@@ -495,7 +495,7 @@ public class InventoryOverlay
 
     public static void renderStackToolTip(int x, int y, ItemStack stack, Minecraft mc, MatrixStack matrixStack)
     {
-        List<ITextComponent> list = stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+        List<ITextComponent> list = stack.getTooltipLines(mc.player, mc.options.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
         List<String> lines = new ArrayList<>();
 
         for (int i = 0; i < list.size(); ++i)

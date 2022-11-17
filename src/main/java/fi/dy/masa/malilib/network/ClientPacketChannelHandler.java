@@ -78,7 +78,7 @@ public class ClientPacketChannelHandler implements IClientPacketChannelHandler
      */
     public boolean processPacketFromServer(SCustomPayloadPlayPacket packet, ClientPlayNetHandler netHandler)
     {
-        ResourceLocation channel = packet.getChannelName();
+        ResourceLocation channel = packet.getIdentifier();
         IPluginChannelHandler handler = this.handlers.get(channel);
 
         if (handler != null)
@@ -107,7 +107,7 @@ public class ClientPacketChannelHandler implements IClientPacketChannelHandler
 
         if (handler != null)
         {
-            handler.sendPacket(packet);
+            handler.send(packet);
         }
         else
         {

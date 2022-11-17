@@ -199,7 +199,7 @@ public class LayerRange
         this.axis = axis;
 
         this.refresher.updateAll();
-        String val = GuiBase.TXT_GREEN + axis.getName2();
+        String val = GuiBase.TXT_GREEN + axis.getName();
         InfoUtils.printActionbarMessage("malilib.message.set_layer_axis_to", val);
     }
 
@@ -295,13 +295,13 @@ public class LayerRange
         switch (this.axis)
         {
             case X:
-                pos = (int) entity.getPosX();
+                pos = (int) entity.getX();
                 break;
             case Y:
-                pos = (int) entity.getPosY();
+                pos = (int) entity.getY();
                 break;
             case Z:
-                pos = (int) entity.getPosZ();
+                pos = (int) entity.getZ();
                 break;
         }
 
@@ -395,7 +395,7 @@ public class LayerRange
 
     public boolean moveLayer(int amount)
     {
-        String axisName = this.axis.getName2().toLowerCase();
+        String axisName = this.axis.getName().toLowerCase();
         String strTo = GuiBase.TXT_GREEN + axisName + " = ";
 
         switch (this.layerMode)
@@ -459,7 +459,7 @@ public class LayerRange
 
         if (printMessage && moved)
         {
-            String axisName = this.axis.getName2().toLowerCase();
+            String axisName = this.axis.getName().toLowerCase();
 
             if (moveMin && moveMax)
             {
@@ -475,7 +475,7 @@ public class LayerRange
 
     protected Pair<Boolean, Boolean> getMoveMinMax(Entity entity)
     {
-        double playerPos = this.axis == Axis.Y ? entity.getPosY() : (this.axis == Axis.X ? entity.getPosX() : entity.getPosZ());
+        double playerPos = this.axis == Axis.Y ? entity.getY() : (this.axis == Axis.X ? entity.getX() : entity.getZ());
         double min = this.layerRangeMin + 0.5D;
         double max = this.layerRangeMax + 0.5D;
         boolean minClosest = (Math.abs(playerPos - min) < Math.abs(playerPos - max)) || playerPos < min;

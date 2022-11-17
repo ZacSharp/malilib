@@ -14,23 +14,23 @@ import fi.dy.masa.malilib.event.WorldLoadHandler;
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraftClient
 {
-    @Shadow public ClientWorld world;
+    @Shadow public ClientWorld level;
 
     private ClientWorld worldBefore;
 
-    @Inject(method = "loadWorld(Lnet/minecraft/client/world/ClientWorld;)V", at = @At("HEAD"))
+    @Inject(method = "setLevel(Lnet/minecraft/client/world/ClientWorld;)V", at = @At("HEAD"))
     private void onLoadWorldPre(@Nullable ClientWorld worldClientIn, CallbackInfo ci)
     {
         // Only handle dimension changes/respawns here.
         // The initial join is handled in MixinClientPlayNetworkHandler onGameJoin
-        if (this.world != null)
+        if (this.level != null)
         {
-            this.worldBefore = this.world;
-            ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPre(this.world, worldClientIn, (Minecraft)(Object) this);
+            this.worldBefore = this.level;
+            ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPre(this.level, worldClientIn, (Minecraft)(Object) this);
         }
     }
 
-    @Inject(method = "loadWorld(Lnet/minecraft/client/world/ClientWorld;)V", at = @At("RETURN"))
+    @Inject(method = "setLevel(Lnet/minecraft/client/world/ClientWorld;)V", at = @At("RETURN"))
     private void onLoadWorldPost(@Nullable ClientWorld worldClientIn, CallbackInfo ci)
     {
         if (this.worldBefore != null)
@@ -40,14 +40,14 @@ public abstract class MixinMinecraftClient
         }
     }
 
-    @Inject(method = "unloadWorld(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("HEAD"))
+    @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("HEAD"))
     private void onDisconnectPre(Screen screen, CallbackInfo ci)
     {
-        this.worldBefore = this.world;
+        this.worldBefore = this.level;
         ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPre(this.worldBefore, null, (Minecraft)(Object) this);
     }
 
-    @Inject(method = "unloadWorld(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("RETURN"))
+    @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("RETURN"))
     private void onDisconnectPost(Screen screen, CallbackInfo ci)
     {
         ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPost(this.worldBefore, null, (Minecraft)(Object) this);

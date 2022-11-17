@@ -62,8 +62,8 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     protected static final int LEFT         = 20;
     protected static final int TOP          = 10;
     public final Minecraft mc = Minecraft.getInstance();
-    public final FontRenderer textRenderer = this.mc.fontRenderer;
-    public final int fontHeight = this.textRenderer.FONT_HEIGHT;
+    public final FontRenderer textRenderer = this.mc.font;
+    public final int fontHeight = this.textRenderer.lineHeight;
     private final List<ButtonBase> buttons = new ArrayList<>();
     private final List<WidgetBase> widgets = new ArrayList<>();
     private final List<TextFieldWrapper<? extends GuiTextFieldGeneric>> textFields = new ArrayList<>();
@@ -115,7 +115,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
 
     public void removed()
     {
-        this.mc.keyboardListener.enableRepeatEvents(false);
+        this.mc.keyboardHandler.setSendRepeatsToGui(false);
     }
 
     @Override
@@ -141,11 +141,11 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     {
         if (showParent)
         {
-            this.mc.displayGuiScreen(this.parent);
+            this.mc.setScreen(this.parent);
         }
         else
         {
-            this.onClose();
+            this.removed();
         }
     }
 
@@ -588,17 +588,17 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
 
     public int getStringWidth(String text)
     {
-        return this.textRenderer.getStringWidth(text);
+        return this.textRenderer.width(text);
     }
 
     public void drawString(MatrixStack matrixStack, String text, int x, int y, int color)
     {
-        this.textRenderer.drawString(matrixStack, text, x, y, color);
+        this.textRenderer.draw(matrixStack, text, x, y, color);
     }
 
     public void drawStringWithShadow(MatrixStack matrixStack, String text, int x, int y, int color)
     {
-        this.textRenderer.drawStringWithShadow(matrixStack, text, x, y, color);
+        this.textRenderer.drawShadow(matrixStack, text, x, y, color);
     }
 
     public int getMaxPrettyNameLength(List<? extends IConfigBase> configs)
@@ -615,7 +615,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
 
     public static void openGui(Screen gui)
     {
-        Minecraft.getInstance().displayGuiScreen(gui);
+        Minecraft.getInstance().setScreen(gui);
     }
 
     public static boolean isShiftDown()
