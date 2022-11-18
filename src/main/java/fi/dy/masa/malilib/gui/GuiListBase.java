@@ -1,7 +1,7 @@
 package fi.dy.masa.malilib.gui;
 
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.gui.widgets.WidgetListBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
@@ -171,7 +171,7 @@ public abstract class GuiListBase<TYPE, WIDGET extends WidgetListEntryBase<TYPE>
     }
 
     @Override
-    public void drawContents(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void drawContents(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         if (this.getListWidget() != null)
         {

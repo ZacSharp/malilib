@@ -1,9 +1,9 @@
 package fi.dy.masa.malilib.util;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.TranslatableComponent;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.interfaces.IMessageConsumer;
@@ -143,7 +143,7 @@ public class InfoUtils
 
         if (mc.player != null)
         {
-            mc.gui.handleChat(ChatType.GAME_INFO, new TranslationTextComponent(key, args), mc.player.getUUID());
+            mc.gui.handleChat(ChatType.GAME_INFO, new TranslatableComponent(key, args), mc.player.getUUID());
         }
     }
 
@@ -182,7 +182,7 @@ public class InfoUtils
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public static void renderInGameMessages(MatrixStack matrixStack)
+    public static void renderInGameMessages(PoseStack matrixStack)
     {
         int x = GuiUtils.getScaledWindowWidth() / 2;
         int y = GuiUtils.getScaledWindowHeight() - 76;
@@ -199,7 +199,7 @@ public class InfoUtils
 
             if (mc.player != null)
             {
-                mc.gui.handleChat(ChatType.GAME_INFO, new TranslationTextComponent(string), mc.player.getUUID());
+                mc.gui.handleChat(ChatType.GAME_INFO, new TranslatableComponent(string), mc.player.getUUID());
             }
         }
     }

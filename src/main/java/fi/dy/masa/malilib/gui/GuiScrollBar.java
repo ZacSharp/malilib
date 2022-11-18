@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 public class GuiScrollBar
 {
@@ -43,7 +43,7 @@ public class GuiScrollBar
 
     public void setValue(int value)
     {
-        this.currentValue = MathHelper.clamp(value, 0, this.maxValue);
+        this.currentValue = Mth.clamp(value, 0, this.maxValue);
     }
 
     public void offsetValue(int offset)

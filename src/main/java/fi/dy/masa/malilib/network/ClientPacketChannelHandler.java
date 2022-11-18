@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import com.google.common.base.Charsets;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.CCustomPayloadPacket;
-import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.resources.ResourceLocation;
 import fi.dy.masa.malilib.MaLiLib;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -76,14 +76,14 @@ public class ClientPacketChannelHandler implements IClientPacketChannelHandler
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public boolean processPacketFromServer(SCustomPayloadPlayPacket packet, ClientPlayNetHandler netHandler)
+    public boolean processPacketFromServer(ClientboundCustomPayloadPacket packet, ClientPacketListener netHandler)
     {
         ResourceLocation channel = packet.getIdentifier();
         IPluginChannelHandler handler = this.handlers.get(channel);
 
         if (handler != null)
         {
-            PacketBuffer buf = PacketSplitter.receive(netHandler, packet);
+            FriendlyByteBuf buf = PacketSplitter.receive(netHandler, packet);
 
             // Finished the complete packet
             if (buf != null)
@@ -101,9 +101,9 @@ public class ClientPacketChannelHandler implements IClientPacketChannelHandler
     {
         String joinedChannels = channels.stream().map(ResourceLocation::toString).collect(Collectors.joining("\0"));
         ByteBuf payload = Unpooled.wrappedBuffer(joinedChannels.getBytes(Charsets.UTF_8));
-        CCustomPayloadPacket packet = new CCustomPayloadPacket(type, new PacketBuffer(payload));
+        ServerboundCustomPayloadPacket packet = new ServerboundCustomPayloadPacket(type, new FriendlyByteBuf(payload));
 
-        ClientPlayNetHandler handler = Minecraft.getInstance().getConnection();
+        ClientPacketListener handler = Minecraft.getInstance().getConnection();
 
         if (handler != null)
         {

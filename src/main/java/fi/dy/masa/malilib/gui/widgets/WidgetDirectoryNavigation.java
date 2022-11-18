@@ -3,7 +3,7 @@ package fi.dy.masa.malilib.gui.widgets;
 import java.io.File;
 import java.util.Arrays;
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.GuiTextInputFeedback;
 import fi.dy.masa.malilib.gui.LeftRight;
@@ -94,7 +94,7 @@ public class WidgetDirectoryNavigation extends WidgetSearchBar
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void render(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         super.render(mouseX, mouseY, selected, matrixStack);
 
@@ -119,7 +119,7 @@ public class WidgetDirectoryNavigation extends WidgetSearchBar
     }
 
     @Override
-    public void postRenderHovered(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void postRenderHovered(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         super.postRenderHovered(mouseX, mouseY, selected, matrixStack);
 

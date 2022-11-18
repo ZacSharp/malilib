@@ -5,11 +5,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Axis;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.interfaces.IRangeChangeListener;
 
@@ -513,11 +513,11 @@ public class LayerRange
     {
         if (this.axis == Direction.Axis.Y)
         {
-            return MathHelper.clamp(value, WORLD_VERTICAL_SIZE_MIN, WORLD_VERTICAL_SIZE_MAX);
+            return Mth.clamp(value, WORLD_VERTICAL_SIZE_MIN, WORLD_VERTICAL_SIZE_MAX);
         }
         else
         {
-            return MathHelper.clamp(value, WORLD_HORIZONTAL_SIZE_MIN, WORLD_HORIZONTAL_SIZE_MAX);
+            return Mth.clamp(value, WORLD_HORIZONTAL_SIZE_MIN, WORLD_HORIZONTAL_SIZE_MAX);
         }
     }
 
@@ -690,10 +690,10 @@ public class LayerRange
     {
         if (this.axis == type)
         {
-            return MathHelper.clamp(value, this.getLayerMin(), this.getLayerMax());
+            return Mth.clamp(value, this.getLayerMin(), this.getLayerMax());
         }
 
-        return MathHelper.clamp(value, getWorldMinValueForAxis(type), getWorldMaxValueForAxis(type));
+        return Mth.clamp(value, getWorldMinValueForAxis(type), getWorldMaxValueForAxis(type));
     }
 
     @Nullable

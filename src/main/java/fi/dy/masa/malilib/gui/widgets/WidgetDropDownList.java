@@ -3,7 +3,7 @@ package fi.dy.masa.malilib.gui.widgets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import fi.dy.masa.malilib.gui.GuiScrollBar;
@@ -255,7 +255,7 @@ public class WidgetDropDownList<T> extends WidgetBase
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void render(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
 

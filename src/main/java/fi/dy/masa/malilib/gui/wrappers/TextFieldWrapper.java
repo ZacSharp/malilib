@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.gui.wrappers;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.util.KeyCodes;
@@ -44,7 +44,7 @@ public class TextFieldWrapper<T extends GuiTextFieldGeneric>
         }
     }
 
-    public void draw(int mouseX, int mouseY, MatrixStack matrixStack)
+    public void draw(int mouseX, int mouseY, PoseStack matrixStack)
     {
         this.textField.render(matrixStack, mouseX, mouseY, 0f);
     }

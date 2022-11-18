@@ -1,7 +1,7 @@
 package fi.dy.masa.malilib.config.gui;
 
 import java.util.List;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 
@@ -36,7 +36,7 @@ public class GuiModConfigs extends GuiConfigsBase
     }
 
     @Override
-    protected void drawTitle(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    protected void drawTitle(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         // NO-OP
     }

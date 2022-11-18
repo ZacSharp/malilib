@@ -2,15 +2,15 @@ package fi.dy.masa.malilib.util;
 
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.client.server.IntegratedServer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.server.level.ServerLevel;
 
 public class WorldUtils
 {
-    public static String getDimensionId(World world)
+    public static String getDimensionId(Level world)
     {
         ResourceLocation id = world.dimension().location();
         return id != null ? id.getNamespace() + "_" + id.getPath() : "__fallback";
@@ -23,7 +23,7 @@ public class WorldUtils
      * @return
      */
     @Nullable
-    public static World getBestWorld(Minecraft mc)
+    public static Level getBestWorld(Minecraft mc)
     {
         IntegratedServer server = mc.getSingleplayerServer();
 
@@ -46,14 +46,14 @@ public class WorldUtils
      * @return
      */
     @Nullable
-    public static Chunk getBestChunk(int chunkX, int chunkZ, Minecraft mc)
+    public static LevelChunk getBestChunk(int chunkX, int chunkZ, Minecraft mc)
     {
         IntegratedServer server = mc.getSingleplayerServer();
-        Chunk chunk = null;
+        LevelChunk chunk = null;
 
         if (mc.level != null && server != null)
         {
-            ServerWorld world = server.getLevel(mc.level.dimension());
+            ServerLevel world = server.getLevel(mc.level.dimension());
 
             if (world != null)
             {

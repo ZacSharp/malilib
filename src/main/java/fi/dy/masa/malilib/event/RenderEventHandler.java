@@ -2,9 +2,9 @@ package fi.dy.masa.malilib.event;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.shader.Framebuffer;
+import com.mojang.blaze3d.pipeline.RenderTarget;
 import fi.dy.masa.malilib.interfaces.IRenderDispatcher;
 import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.util.InfoUtils;
@@ -52,7 +52,7 @@ public class RenderEventHandler implements IRenderDispatcher
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public void onRenderGameOverlayPost(net.minecraft.client.Minecraft mc, float partialTicks, MatrixStack matrixStack)
+    public void onRenderGameOverlayPost(net.minecraft.client.Minecraft mc, float partialTicks, PoseStack matrixStack)
     {
         mc.getProfiler().push("malilib_rendergameoverlaypost");
 
@@ -76,7 +76,7 @@ public class RenderEventHandler implements IRenderDispatcher
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public void onRenderTooltipLast(com.mojang.blaze3d.matrix.MatrixStack matrixStack, net.minecraft.item.ItemStack stack, int x, int y)
+    public void onRenderTooltipLast(com.mojang.blaze3d.vertex.PoseStack matrixStack, net.minecraft.world.item.ItemStack stack, int x, int y)
     {
         if (this.tooltipLastRenderers.isEmpty() == false)
         {
@@ -90,13 +90,13 @@ public class RenderEventHandler implements IRenderDispatcher
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public void onRenderWorldLast(com.mojang.blaze3d.matrix.MatrixStack matrixStack, net.minecraft.client.Minecraft mc, float partialTicks)
+    public void onRenderWorldLast(com.mojang.blaze3d.vertex.PoseStack matrixStack, net.minecraft.client.Minecraft mc, float partialTicks)
     {
         if (this.worldLastRenderers.isEmpty() == false)
         {
             mc.getProfiler().popPush("malilib_renderworldlast");
 
-            Framebuffer fb = Minecraft.useShaderTransparency() ? mc.levelRenderer.getTranslucentTarget() : null;
+            RenderTarget fb = Minecraft.useShaderTransparency() ? mc.levelRenderer.getTranslucentTarget() : null;
 
             if (fb != null)
             {

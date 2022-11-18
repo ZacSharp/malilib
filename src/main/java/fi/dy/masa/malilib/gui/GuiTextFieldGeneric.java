@@ -1,22 +1,22 @@
 package fi.dy.masa.malilib.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.TextComponent;
 
-public class GuiTextFieldGeneric extends TextFieldWidget
+public class GuiTextFieldGeneric extends EditBox
 {
     protected int x;
     protected int y;
     protected int width;
     protected int height;
 
-    public GuiTextFieldGeneric(int x, int y, int width, int height, FontRenderer textRenderer)
+    public GuiTextFieldGeneric(int x, int y, int width, int height, Font textRenderer)
     {
-        super(textRenderer, x, y, width, height, new StringTextComponent(""));
+        super(textRenderer, x, y, width, height, new TextComponent(""));
 
         this.x = x;
         this.y = y;
@@ -86,7 +86,7 @@ public class GuiTextFieldGeneric extends TextFieldWidget
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         if (this.getBlitOffset() != 0)
         {

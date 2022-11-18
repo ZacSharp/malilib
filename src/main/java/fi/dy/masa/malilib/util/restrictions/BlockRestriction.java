@@ -2,8 +2,8 @@ package fi.dy.masa.malilib.util.restrictions;
 
 import java.util.List;
 import java.util.Set;
-import net.minecraft.block.Block;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.resources.ResourceLocation;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraftforge.registries.ForgeRegistries;

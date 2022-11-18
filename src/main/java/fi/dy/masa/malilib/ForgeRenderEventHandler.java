@@ -26,7 +26,7 @@ class ForgeRenderEventHandler
     @SubscribeEvent
     public void onRenderWorldLast(RenderWorldLastEvent event)
     {
-        net.minecraft.client.renderer.ActiveRenderInfo cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera();
+        net.minecraft.client.Camera cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera();
         float yaw = cam.getYRot();
         float pitch = cam.getXRot();
         org.lwjgl.opengl.GL11.glPushMatrix();

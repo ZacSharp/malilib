@@ -1,9 +1,9 @@
 package fi.dy.masa.malilib.gui;
 
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
@@ -61,7 +61,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
     }
 
     @Override
-    public void drawContents(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void drawContents(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         if (this.getParent() != null)
         {

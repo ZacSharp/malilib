@@ -1,10 +1,10 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.interfaces.ISliderCallback;
 import fi.dy.masa.malilib.render.RenderUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class WidgetSlider extends WidgetBase
 {
@@ -21,7 +21,7 @@ public class WidgetSlider extends WidgetBase
 
         this.callback = callback;
         int usableWidth = this.width - 4;
-        this.sliderWidth = MathHelper.clamp(usableWidth / callback.getMaxSteps(), 8, usableWidth / 2);
+        this.sliderWidth = Mth.clamp(usableWidth / callback.getMaxSteps(), 8, usableWidth / 2);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class WidgetSlider extends WidgetBase
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void render(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         if (this.dragging && mouseX != this.lastMouseX)
         {
@@ -71,6 +71,6 @@ public class WidgetSlider extends WidgetBase
     protected double getRelativePosition(int mouseX)
     {
         int relPos = mouseX - this.x - this.sliderWidth / 2;
-        return MathHelper.clamp((double) relPos / (double) (this.width - this.sliderWidth - 4), 0, 1);
+        return Mth.clamp((double) relPos / (double) (this.width - this.sliderWidth - 4), 0, 1);
     }
 }

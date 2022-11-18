@@ -8,9 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.GuiScrollBar;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
@@ -379,7 +379,7 @@ public abstract class WidgetListBase<TYPE, WIDGET extends WidgetListEntryBase<TY
     }
 
     @Override
-    public void drawContents(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void drawContents(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
 
@@ -595,7 +595,7 @@ public abstract class WidgetListBase<TYPE, WIDGET extends WidgetListEntryBase<TY
         }
         else if (this.lastSelectedEntryIndex >= 0 && this.listContents.size() > 0)
         {
-            int index = MathHelper.clamp(this.lastSelectedEntryIndex + amount, 0, this.listContents.size() - 1);
+            int index = Mth.clamp(this.lastSelectedEntryIndex + amount, 0, this.listContents.size() - 1);
 
             if (index != this.lastSelectedEntryIndex)
             {

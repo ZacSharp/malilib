@@ -2,7 +2,7 @@ package fi.dy.masa.malilib.util;
 
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 public class EntityUtils
 {

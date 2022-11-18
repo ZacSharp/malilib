@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
@@ -28,30 +28,30 @@ import fi.dy.masa.malilib.util.KeyCodes;
 
 public abstract class GuiBase extends Screen implements IMessageConsumer, IStringConsumer
 {
-    public static final String TXT_AQUA = TextFormatting.AQUA.toString();
-    public static final String TXT_BLACK = TextFormatting.BLACK.toString();
-    public static final String TXT_BLUE = TextFormatting.BLUE.toString();
-    public static final String TXT_GOLD = TextFormatting.GOLD.toString();
-    public static final String TXT_GRAY = TextFormatting.GRAY.toString();
-    public static final String TXT_GREEN = TextFormatting.GREEN.toString();
-    public static final String TXT_RED = TextFormatting.RED.toString();
-    public static final String TXT_WHITE = TextFormatting.WHITE.toString();
-    public static final String TXT_YELLOW = TextFormatting.YELLOW.toString();
+    public static final String TXT_AQUA = ChatFormatting.AQUA.toString();
+    public static final String TXT_BLACK = ChatFormatting.BLACK.toString();
+    public static final String TXT_BLUE = ChatFormatting.BLUE.toString();
+    public static final String TXT_GOLD = ChatFormatting.GOLD.toString();
+    public static final String TXT_GRAY = ChatFormatting.GRAY.toString();
+    public static final String TXT_GREEN = ChatFormatting.GREEN.toString();
+    public static final String TXT_RED = ChatFormatting.RED.toString();
+    public static final String TXT_WHITE = ChatFormatting.WHITE.toString();
+    public static final String TXT_YELLOW = ChatFormatting.YELLOW.toString();
 
-    public static final String TXT_BOLD = TextFormatting.BOLD.toString();
-    public static final String TXT_ITALIC = TextFormatting.ITALIC.toString();
-    public static final String TXT_RST = TextFormatting.RESET.toString();
-    public static final String TXT_STRIKETHROUGH = TextFormatting.STRIKETHROUGH.toString();
-    public static final String TXT_UNDERLINE = TextFormatting.UNDERLINE.toString();
+    public static final String TXT_BOLD = ChatFormatting.BOLD.toString();
+    public static final String TXT_ITALIC = ChatFormatting.ITALIC.toString();
+    public static final String TXT_RST = ChatFormatting.RESET.toString();
+    public static final String TXT_STRIKETHROUGH = ChatFormatting.STRIKETHROUGH.toString();
+    public static final String TXT_UNDERLINE = ChatFormatting.UNDERLINE.toString();
 
-    public static final String TXT_DARK_AQUA = TextFormatting.DARK_AQUA.toString();
-    public static final String TXT_DARK_BLUE = TextFormatting.DARK_BLUE.toString();
-    public static final String TXT_DARK_GRAY = TextFormatting.DARK_GRAY.toString();
-    public static final String TXT_DARK_GREEN = TextFormatting.DARK_GREEN.toString();
-    public static final String TXT_DARK_PURPLE = TextFormatting.DARK_PURPLE.toString();
-    public static final String TXT_DARK_RED = TextFormatting.DARK_RED.toString();
+    public static final String TXT_DARK_AQUA = ChatFormatting.DARK_AQUA.toString();
+    public static final String TXT_DARK_BLUE = ChatFormatting.DARK_BLUE.toString();
+    public static final String TXT_DARK_GRAY = ChatFormatting.DARK_GRAY.toString();
+    public static final String TXT_DARK_GREEN = ChatFormatting.DARK_GREEN.toString();
+    public static final String TXT_DARK_PURPLE = ChatFormatting.DARK_PURPLE.toString();
+    public static final String TXT_DARK_RED = ChatFormatting.DARK_RED.toString();
 
-    public static final String TXT_LIGHT_PURPLE = TextFormatting.LIGHT_PURPLE.toString();
+    public static final String TXT_LIGHT_PURPLE = ChatFormatting.LIGHT_PURPLE.toString();
 
     protected static final String BUTTON_LABEL_ADD = TXT_DARK_GREEN + "+" + TXT_RST;
     protected static final String BUTTON_LABEL_REMOVE = TXT_DARK_RED + "-" + TXT_RST;
@@ -62,7 +62,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     protected static final int LEFT         = 20;
     protected static final int TOP          = 10;
     public final Minecraft mc = Minecraft.getInstance();
-    public final FontRenderer textRenderer = this.mc.font;
+    public final Font textRenderer = this.mc.font;
     public final int fontHeight = this.textRenderer.lineHeight;
     private final List<ButtonBase> buttons = new ArrayList<>();
     private final List<WidgetBase> widgets = new ArrayList<>();
@@ -77,7 +77,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
 
     protected GuiBase()
     {
-        super(new StringTextComponent(""));
+        super(new TextComponent(""));
     }
 
     public GuiBase setParent(@Nullable Screen parent)
@@ -103,9 +103,9 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     }
 
     @Override
-    public ITextComponent getTitle()
+    public Component getTitle()
     {
-        return new StringTextComponent(this.getTitleString());
+        return new TextComponent(this.getTitleString());
     }
 
     public void setTitle(String title)
@@ -150,7 +150,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         this.drawScreenBackground(mouseX, mouseY);
         this.drawTitle(matrixStack, mouseX, mouseY, partialTicks);
@@ -426,7 +426,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
         this.messageRenderer.setNextMessageType(type);
     }
 
-    protected void drawGuiMessages(MatrixStack matrixStack)
+    protected void drawGuiMessages(PoseStack matrixStack)
     {
         this.messageRenderer.drawMessages(this.width / 2, this.height / 2, matrixStack);
     }
@@ -516,16 +516,16 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
         RenderUtils.drawRect(0, 0, this.width, this.height, TOOLTIP_BACKGROUND);
     }
 
-    protected void drawTitle(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    protected void drawTitle(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         this.drawString(matrixStack, this.getTitleString(), LEFT, TOP, COLOR_WHITE);
     }
 
-    protected void drawContents(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    protected void drawContents(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
     }
 
-    protected void drawButtons(int mouseX, int mouseY, float partialTicks, MatrixStack matrixStack)
+    protected void drawButtons(int mouseX, int mouseY, float partialTicks, PoseStack matrixStack)
     {
         for (ButtonBase button : this.buttons)
         {
@@ -533,7 +533,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
         }
     }
 
-    protected void drawTextFields(int mouseX, int mouseY, MatrixStack matrixStack)
+    protected void drawTextFields(int mouseX, int mouseY, PoseStack matrixStack)
     {
         for (TextFieldWrapper<?> entry : this.textFields)
         {
@@ -541,7 +541,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
         }
     }
 
-    protected void drawWidgets(int mouseX, int mouseY, MatrixStack matrixStack)
+    protected void drawWidgets(int mouseX, int mouseY, PoseStack matrixStack)
     {
         this.hoveredWidget = null;
 
@@ -559,7 +559,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
         }
     }
 
-    protected void drawButtonHoverTexts(int mouseX, int mouseY, float partialTicks, MatrixStack matrixStack)
+    protected void drawButtonHoverTexts(int mouseX, int mouseY, float partialTicks, PoseStack matrixStack)
     {
         for (ButtonBase button : this.buttons)
         {
@@ -572,7 +572,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
         RenderUtils.disableDiffuseLighting();
     }
 
-    protected void drawHoveredWidget(int mouseX, int mouseY, MatrixStack matrixStack)
+    protected void drawHoveredWidget(int mouseX, int mouseY, PoseStack matrixStack)
     {
         if (this.hoveredWidget != null)
         {
@@ -591,12 +591,12 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
         return this.textRenderer.width(text);
     }
 
-    public void drawString(MatrixStack matrixStack, String text, int x, int y, int color)
+    public void drawString(PoseStack matrixStack, String text, int x, int y, int color)
     {
         this.textRenderer.draw(matrixStack, text, x, y, color);
     }
 
-    public void drawStringWithShadow(MatrixStack matrixStack, String text, int x, int y, int color)
+    public void drawStringWithShadow(PoseStack matrixStack, String text, int x, int y, int color)
     {
         this.textRenderer.drawShadow(matrixStack, text, x, y, color);
     }

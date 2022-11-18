@@ -5,13 +5,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
-import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.network.play.client.CCustomPayloadPacket;
-import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.PacketListener;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.resources.ResourceLocation;
 import io.netty.buffer.Unpooled;
 
 /**
@@ -28,19 +28,19 @@ public class PacketSplitter
     public static final int DEFAULT_MAX_RECEIVE_SIZE_C2S = 1048576;
     public static final int DEFAULT_MAX_RECEIVE_SIZE_S2C = 67108864;
 
-    private static final Map<Pair<INetHandler, ResourceLocation>, ReadingSession> READING_SESSIONS = new HashMap<>();
+    private static final Map<Pair<PacketListener, ResourceLocation>, ReadingSession> READING_SESSIONS = new HashMap<>();
 
-    public static void send(ServerPlayNetHandler networkHandler, ResourceLocation channel, PacketBuffer packet)
+    public static void send(ServerGamePacketListenerImpl networkHandler, ResourceLocation channel, FriendlyByteBuf packet)
     {
-        send(packet, MAX_PAYLOAD_PER_PACKET_S2C, buf -> networkHandler.send(new SCustomPayloadPlayPacket(channel, buf)));
+        send(packet, MAX_PAYLOAD_PER_PACKET_S2C, buf -> networkHandler.send(new ClientboundCustomPayloadPacket(channel, buf)));
     }
 
-    public static void send(ClientPlayNetHandler networkHandler, ResourceLocation channel, PacketBuffer packet)
+    public static void send(ClientPacketListener networkHandler, ResourceLocation channel, FriendlyByteBuf packet)
     {
-        send(packet, MAX_PAYLOAD_PER_PACKET_C2S, buf -> networkHandler.send(new CCustomPayloadPacket(channel, buf)));
+        send(packet, MAX_PAYLOAD_PER_PACKET_C2S, buf -> networkHandler.send(new ServerboundCustomPayloadPacket(channel, buf)));
     }
 
-    private static void send(PacketBuffer packet, int payloadLimit, Consumer<PacketBuffer> sender)
+    private static void send(FriendlyByteBuf packet, int payloadLimit, Consumer<FriendlyByteBuf> sender)
     {
         int len = packet.writerIndex();
 
@@ -49,7 +49,7 @@ public class PacketSplitter
         for (int offset = 0; offset < len; offset += payloadLimit)
         {
             int thisLen = Math.min(len - offset, payloadLimit);
-            PacketBuffer buf = new PacketBuffer(Unpooled.buffer(thisLen));
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer(thisLen));
 
             buf.resetWriterIndex();
 
@@ -84,32 +84,32 @@ public class PacketSplitter
     */
 
     @Nullable
-    public static PacketBuffer receive(ClientPlayNetHandler networkHandler, SCustomPayloadPlayPacket message)
+    public static FriendlyByteBuf receive(ClientPacketListener networkHandler, ClientboundCustomPayloadPacket message)
     {
         return receive(networkHandler, message, DEFAULT_MAX_RECEIVE_SIZE_S2C);
     }
 
     @Nullable
-    private static PacketBuffer receive(ClientPlayNetHandler networkHandler, SCustomPayloadPlayPacket message, int maxLength)
+    private static FriendlyByteBuf receive(ClientPacketListener networkHandler, ClientboundCustomPayloadPacket message, int maxLength)
     {
-        Pair<INetHandler, ResourceLocation> key = Pair.of(networkHandler, message.getIdentifier());
+        Pair<PacketListener, ResourceLocation> key = Pair.of(networkHandler, message.getIdentifier());
 
         return READING_SESSIONS.computeIfAbsent(key, ReadingSession::new).receive(message.getData(), maxLength);
     }
 
     private static class ReadingSession
     {
-        private final Pair<INetHandler, ResourceLocation> key;
+        private final Pair<PacketListener, ResourceLocation> key;
         private int expectedSize = -1;
-        private PacketBuffer received;
+        private FriendlyByteBuf received;
 
-        private ReadingSession(Pair<INetHandler, ResourceLocation> key)
+        private ReadingSession(Pair<PacketListener, ResourceLocation> key)
         {
             this.key = key;
         }
 
         @Nullable
-        private PacketBuffer receive(PacketBuffer data, int maxLength)
+        private FriendlyByteBuf receive(FriendlyByteBuf data, int maxLength)
         {
             if (this.expectedSize < 0)
             {
@@ -120,7 +120,7 @@ public class PacketSplitter
                     throw new IllegalArgumentException("Payload too large");
                 }
 
-                this.received = new PacketBuffer(Unpooled.buffer(this.expectedSize));
+                this.received = new FriendlyByteBuf(Unpooled.buffer(this.expectedSize));
             }
 
             this.received.writeBytes(data.readBytes(data.readableBytes()));

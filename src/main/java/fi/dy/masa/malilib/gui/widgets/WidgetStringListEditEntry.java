@@ -1,7 +1,7 @@
 package fi.dy.masa.malilib.gui.widgets;
 
 import java.util.List;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.config.IConfigStringList;
 import fi.dy.masa.malilib.config.gui.ConfigOptionChangeListenerTextField;
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
@@ -193,7 +193,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void render(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
 

@@ -4,13 +4,13 @@ import java.awt.Color;
 import javax.annotation.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.util.Mth;
 import fi.dy.masa.malilib.config.IConfigInteger;
 import fi.dy.masa.malilib.gui.interfaces.IDialogHandler;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
@@ -154,7 +154,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         if (this.getParent() != null)
         {
@@ -181,7 +181,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
     }
 
     @Override
-    protected void drawTitle(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    protected void drawTitle(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         this.drawStringWithShadow(matrixStack, this.title, this.dialogLeft + 10, this.dialogTop + 6, COLOR_WHITE);
     }
@@ -312,8 +312,8 @@ public class GuiColorEditorHSV extends GuiDialogBase
     {
         if (element == Element.SV)
         {
-            mouseX = MathHelper.clamp(mouseX, this.xHS, this.xHS + this.sizeHS);
-            mouseY = MathHelper.clamp(mouseY, this.yHS, this.yHS + this.sizeHS);
+            mouseX = Mth.clamp(mouseX, this.xHS, this.xHS + this.sizeHS);
+            mouseY = Mth.clamp(mouseY, this.yHS, this.yHS + this.sizeHS);
             int relX = mouseX - this.xHS;
             int relY = mouseY - this.yHS;
             float saturation = 1f - ((float) relY / (float) this.sizeHS);
@@ -328,7 +328,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
         }
         else if (element == Element.H_FULL_SV)
         {
-            mouseY = MathHelper.clamp(mouseY, this.yHS, this.yHS + this.sizeHS);
+            mouseY = Mth.clamp(mouseY, this.yHS, this.yHS + this.sizeHS);
             int relY = mouseY - this.yHS;
             float hue = 1f - ((float) relY / (float) this.sizeHS);
 
@@ -338,7 +338,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
         }
         else
         {
-            mouseX = MathHelper.clamp(mouseX, this.xH, this.xH + this.widthSlider);
+            mouseX = Mth.clamp(mouseX, this.xH, this.xH + this.widthSlider);
             int relX = mouseX - this.xH;
             float relVal = (float) relX / (float) this.widthSlider;
 
@@ -482,7 +482,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
         RenderUtils.drawOutline(cx - 1, cy - 1, cw + 2, ch + 2, 0xC0FFFFFF, z); // current color indicator
         RenderUtils.drawOutline(this.xHFullSV, y - 1, this.widthHFullSV, this.sizeHS + 2, 0xC0FFFFFF, z); // Hue vertical/full value
 
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
 
         RenderSystem.disableTexture();
@@ -498,7 +498,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
         GL20.glUseProgram(SHADER_HUE.getProgram());
         GL20.glUniform1f(GL20.glGetUniformLocation(SHADER_HUE.getProgram(), "hue_value"), this.relH);
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_TEX);
 
         buffer.vertex(x    , y    , z).uv(1, 0).endVertex();
         buffer.vertex(x    , y + h, z).uv(0, 0).endVertex();
@@ -509,7 +509,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
 
         GL20.glUseProgram(0);
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         float r = this.relR;
         float g = this.relG;
@@ -808,30 +808,30 @@ public class GuiColorEditorHSV extends GuiDialogBase
                     switch (this.type)
                     {
                         case H:
-                            val = MathHelper.clamp(val, 0, 360);
+                            val = Mth.clamp(val, 0, 360);
                             float h = (float) val / 360f;
                             colorNew = Color.HSBtoRGB(h, hsv[1], hsv[2]);
                             break;
                         case S:
-                            val = MathHelper.clamp(val, 0, 100);
+                            val = Mth.clamp(val, 0, 100);
                             float s = (float) val / 100f;
                             colorNew = Color.HSBtoRGB(hsv[0], s, hsv[2]);
                             break;
                         case V:
-                            val = MathHelper.clamp(val, 0, 100);
+                            val = Mth.clamp(val, 0, 100);
                             float v = (float) val / 100f;
                             colorNew = Color.HSBtoRGB(hsv[0], hsv[1], v);
                             break;
                         case R:
-                            val = MathHelper.clamp(val, 0, 255);
+                            val = Mth.clamp(val, 0, 255);
                             colorNew = (colorOld & 0x00FFFF) | (val << 16);
                             break;
                         case G:
-                            val = MathHelper.clamp(val, 0, 255);
+                            val = Mth.clamp(val, 0, 255);
                             colorNew = (colorOld & 0xFF00FF) | (val <<  8);
                             break;
                         case B:
-                            val = MathHelper.clamp(val, 0, 255);
+                            val = Mth.clamp(val, 0, 255);
                             colorNew = (colorOld & 0xFFFF00) | val;
                             break;
                         default:

@@ -6,39 +6,39 @@ import java.util.List;
 import java.util.Random;
 import javax.annotation.Nullable;
 import org.lwjgl.opengl.GL11;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.Font;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.vertex.Tesselator;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.FilledMapItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.storage.MapData;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.MapItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.malilib.gui.GuiBase;
@@ -80,17 +80,17 @@ public class RenderUtils
 
     public static void disableDiffuseLighting()
     {
-        RenderHelper.turnOff();
+        Lighting.turnOff();
     }
 
-    public static void enableDiffuseLightingForLevel(MatrixStack matrixStack)
+    public static void enableDiffuseLightingForLevel(PoseStack matrixStack)
     {
-        RenderHelper.setupLevel(matrixStack.last().pose());
+        Lighting.setupLevel(matrixStack.last().pose());
     }
 
     public static void enableDiffuseLightingGui3D()
     {
-        RenderHelper.setupFor3DItems();
+        Lighting.setupFor3DItems();
     }
 
     public static void drawOutlinedBox(int x, int y, int width, int height, int colorBg, int colorBorder)
@@ -150,14 +150,14 @@ public class RenderUtils
         float g = (float) (color >>  8 & 255) / 255.0F;
         float b = (float) (color & 255) / 255.0F;
 
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
 
         RenderSystem.disableTexture();
         setupBlend();
         color(r, g, b, a);
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
 
         buffer.vertex(x        , y         , zLevel).endVertex();
         buffer.vertex(x        , y + height, zLevel).endVertex();
@@ -173,11 +173,11 @@ public class RenderUtils
     public static void drawTexturedRect(int x, int y, int u, int v, int width, int height, float zLevel)
     {
         float pixelWidth = 0.00390625F;
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
 
         setupBlend();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_TEX);
 
         buffer.vertex(x        , y + height, zLevel).uv( u          * pixelWidth, (v + height) * pixelWidth).endVertex();
         buffer.vertex(x + width, y + height, zLevel).uv((u + width) * pixelWidth, (v + height) * pixelWidth).endVertex();
@@ -202,13 +202,13 @@ public class RenderUtils
         buffer.vertex(x        , y         , zLevel).uv( u          * pixelWidth,  v           * pixelWidth).endVertex();
     }
 
-    public static void drawHoverText(int x, int y, List<String> textLines, MatrixStack matrixStack)
+    public static void drawHoverText(int x, int y, List<String> textLines, PoseStack matrixStack)
     {
         Minecraft mc = mc();
 
         if (textLines.isEmpty() == false && GuiUtils.getCurrentScreen() != null)
         {
-            FontRenderer font = mc.font;
+            Font font = mc.font;
             RenderSystem.disableRescaleNormal();
             disableDiffuseLighting();
             RenderSystem.disableLighting();
@@ -292,9 +292,9 @@ public class RenderUtils
         setupBlend();
         RenderSystem.shadeModel(GL11.GL_SMOOTH);
 
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         buffer.vertex(right, top,    zLevel).color(sr, sg, sb, sa).endVertex();
         buffer.vertex(left,  top,    zLevel).color(sr, sg, sb, sa).endVertex();
@@ -309,9 +309,9 @@ public class RenderUtils
         RenderSystem.enableTexture();
     }
 
-    public static void drawCenteredString(int x, int y, int color, String text, MatrixStack matrixStack)
+    public static void drawCenteredString(int x, int y, int color, String text, PoseStack matrixStack)
     {
-        FontRenderer textRenderer = mc().font;
+        Font textRenderer = mc().font;
         textRenderer.drawShadow(matrixStack, text, x - textRenderer.width(text) / 2, y, color);
     }
 
@@ -325,20 +325,20 @@ public class RenderUtils
         drawRect(x, y, 1, height, color);
     }
 
-    public static void renderSprite(int x, int y, int width, int height, ResourceLocation atlas, ResourceLocation texture, MatrixStack matrixStack)
+    public static void renderSprite(int x, int y, int width, int height, ResourceLocation atlas, ResourceLocation texture, PoseStack matrixStack)
     {
         if (texture != null)
         {
             TextureAtlasSprite sprite = mc().getTextureAtlas(atlas).apply(texture);
             RenderSystem.disableLighting();
-            AbstractGui.blit(matrixStack, x, y, 0, width, height, sprite);
+            GuiComponent.blit(matrixStack, x, y, 0, width, height, sprite);
         }
     }
 
-    public static void renderText(int x, int y, int color, String text, MatrixStack matrixStack)
+    public static void renderText(int x, int y, int color, String text, PoseStack matrixStack)
     {
         String[] parts = text.split("\\\\n");
-        FontRenderer textRenderer = mc().font;
+        Font textRenderer = mc().font;
 
         for (String line : parts)
         {
@@ -347,11 +347,11 @@ public class RenderUtils
         }
     }
 
-    public static void renderText(int x, int y, int color, List<String> lines, MatrixStack matrixStack)
+    public static void renderText(int x, int y, int color, List<String> lines, PoseStack matrixStack)
     {
         if (lines.isEmpty() == false)
         {
-            FontRenderer textRenderer = mc().font;
+            Font textRenderer = mc().font;
 
             for (String line : lines)
             {
@@ -363,9 +363,9 @@ public class RenderUtils
 
     public static int renderText(int xOff, int yOff, double scale, int textColor, int bgColor,
             HudAlignment alignment, boolean useBackground, boolean useShadow, List<String> lines,
-            MatrixStack matrixStack)
+            PoseStack matrixStack)
     {
-        FontRenderer fontRenderer = mc().font;
+        Font fontRenderer = mc().font;
         final int scaledWidth = GuiUtils.getScaledWindowWidth();
         final int lineHeight = fontRenderer.lineHeight + 2;
         final int contentHeight = lines.size() * lineHeight - 2;
@@ -438,7 +438,7 @@ public class RenderUtils
         return contentHeight + bgMargin * 2;
     }
 
-    public static int getHudOffsetForPotions(HudAlignment alignment, double scale, PlayerEntity player)
+    public static int getHudOffsetForPotions(HudAlignment alignment, double scale, Player player)
     {
         if (alignment == HudAlignment.TOP_RIGHT)
         {
@@ -448,16 +448,16 @@ public class RenderUtils
                 return 0;
             }
 
-            Collection<EffectInstance> effects = player.getActiveEffects();
+            Collection<MobEffectInstance> effects = player.getActiveEffects();
 
             if (effects.isEmpty() == false)
             {
                 int y1 = 0;
                 int y2 = 0;
 
-                for (EffectInstance effectInstance : effects)
+                for (MobEffectInstance effectInstance : effects)
                 {
-                    Effect effect = effectInstance.getEffect();
+                    MobEffect effect = effectInstance.getEffect();
 
                     if (effectInstance.isVisible() && effectInstance.showIcon())
                     {
@@ -520,7 +520,7 @@ public class RenderUtils
      */
     public static void drawBlockBoundingBoxOutlinesBatchedLines(BlockPos pos, Color4f color, double expand, BufferBuilder buffer)
     {
-        drawBlockBoundingBoxOutlinesBatchedLines(pos, Vector3d.ZERO, color, expand, buffer);
+        drawBlockBoundingBoxOutlinesBatchedLines(pos, Vec3.ZERO, color, expand, buffer);
     }
 
     /**
@@ -532,7 +532,7 @@ public class RenderUtils
      * @param expand
      * @param buffer
      */
-    public static void drawBlockBoundingBoxOutlinesBatchedLines(BlockPos pos, Vector3d cameraPos, Color4f color, double expand, BufferBuilder buffer)
+    public static void drawBlockBoundingBoxOutlinesBatchedLines(BlockPos pos, Vec3 cameraPos, Color4f color, double expand, BufferBuilder buffer)
     {
         double minX = pos.getX() - expand - cameraPos.x;
         double minY = pos.getY() - expand - cameraPos.y;
@@ -567,7 +567,7 @@ public class RenderUtils
      */
     public static void drawBoxWithEdgesBatched(BlockPos posMin, BlockPos posMax, Color4f colorLines, Color4f colorSides, BufferBuilder bufferQuads, BufferBuilder bufferLines)
     {
-        drawBoxWithEdgesBatched(posMin, posMax, Vector3d.ZERO, colorLines, colorSides, bufferQuads, bufferLines);
+        drawBoxWithEdgesBatched(posMin, posMax, Vec3.ZERO, colorLines, colorSides, bufferQuads, bufferLines);
     }
 
     /**
@@ -582,7 +582,7 @@ public class RenderUtils
      * @param bufferQuads
      * @param bufferLines
      */
-    public static void drawBoxWithEdgesBatched(BlockPos posMin, BlockPos posMax, Vector3d cameraPos, Color4f colorLines, Color4f colorSides, BufferBuilder bufferQuads, BufferBuilder bufferLines)
+    public static void drawBoxWithEdgesBatched(BlockPos posMin, BlockPos posMax, Vec3 cameraPos, Color4f colorLines, Color4f colorSides, BufferBuilder bufferQuads, BufferBuilder bufferLines)
     {
         final double x1 = posMin.getX() - cameraPos.x;
         final double y1 = posMin.getY() - cameraPos.y;
@@ -697,7 +697,7 @@ public class RenderUtils
         buffer.vertex(minX, maxY, maxZ).color(color.r, color.g, color.b, color.a).endVertex();
     }
 
-    public static void drawBox(IntBoundingBox bb, Vector3d cameraPos, Color4f color, BufferBuilder bufferQuads, BufferBuilder bufferLines)
+    public static void drawBox(IntBoundingBox bb, Vec3 cameraPos, Color4f color, BufferBuilder bufferQuads, BufferBuilder bufferLines)
     {
         double minX = bb.minX - cameraPos.x;
         double minY = bb.minY - cameraPos.y;
@@ -720,7 +720,7 @@ public class RenderUtils
      * @param scale
      * @param mc
      */
-    public static void drawTextPlate(List<String> text, double x, double y, double z, float scale, MatrixStack matrixStack)
+    public static void drawTextPlate(List<String> text, double x, double y, double z, float scale, PoseStack matrixStack)
     {
         Entity entity = mc().getCameraEntity();
 
@@ -731,9 +731,9 @@ public class RenderUtils
     }
 
     public static void drawTextPlate(List<String> text, double x, double y, double z, float yaw, float pitch,
-            float scale, int textColor, int bgColor, boolean disableDepth, MatrixStack matrixStack)
+            float scale, int textColor, int bgColor, boolean disableDepth, PoseStack matrixStack)
     {
-        FontRenderer textRenderer = mc().font;
+        Font textRenderer = mc().font;
 
         RenderSystem.alphaFunc(GL11.GL_GREATER, 0.1F);
         RenderSystem.pushMatrix();
@@ -756,7 +756,7 @@ public class RenderUtils
         setupBlend();
         RenderSystem.disableTexture();
 
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
         int maxLineLen = 0;
 
@@ -772,7 +772,7 @@ public class RenderUtils
         int bgg = ((bgColor >>>  8) & 0xFF);
         int bgb = (bgColor          & 0xFF);
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
         buffer.vertex(-strLenHalf - 1,          -1, 0.0D).color(bgr, bgg, bgb, bga).endVertex();
         buffer.vertex(-strLenHalf - 1,  textHeight, 0.0D).color(bgr, bgg, bgb, bga).endVertex();
         buffer.vertex( strLenHalf    ,  textHeight, 0.0D).color(bgr, bgg, bgb, bga).endVertex();
@@ -819,12 +819,12 @@ public class RenderUtils
         RenderSystem.popMatrix();
     }
 
-    public static void renderBlockTargetingOverlay(Entity entity, BlockPos pos, Direction side, Vector3d hitVec,
-            Color4f color, MatrixStack matrixStack, Minecraft mc)
+    public static void renderBlockTargetingOverlay(Entity entity, BlockPos pos, Direction side, Vec3 hitVec,
+            Color4f color, PoseStack matrixStack, Minecraft mc)
     {
         Direction playerFacing = entity.getDirection();
         HitPart part = PositionUtils.getHitPart(side, playerFacing, pos, hitVec);
-        Vector3d cameraPos = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 cameraPos = mc.gameRenderer.getMainCamera().getPosition();
 
         double x = pos.getX() + 0.5d - cameraPos.x;
         double y = pos.getY() + 0.5d - cameraPos.y;
@@ -832,11 +832,11 @@ public class RenderUtils
 
         RenderSystem.pushMatrix();
 
-        MatrixStack matrixStackTmp = new MatrixStack();
+        PoseStack matrixStackTmp = new PoseStack();
         blockTargetingOverlayTranslations(x, y, z, side, playerFacing, matrixStackTmp);
         RenderSystem.multMatrix(matrixStackTmp.last().pose());
 
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
         int quadAlpha = (int) (0.18f * 255f);
         int hr = (int) (color.r * 255f);
@@ -845,7 +845,7 @@ public class RenderUtils
         int ha = (int) (color.a * 255f);
         int c = 255;
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         // White full block background
         buffer.vertex(x - 0.5, y - 0.5, z).color(c, c, c, quadAlpha).endVertex();
@@ -892,7 +892,7 @@ public class RenderUtils
 
         RenderSystem.lineWidth(1.6f);
 
-        buffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormat.POSITION_COLOR);
 
         // Middle small rectangle
         buffer.vertex(x - 0.25, y - 0.25, z).color(c, c, c, c).endVertex();
@@ -901,7 +901,7 @@ public class RenderUtils
         buffer.vertex(x - 0.25, y + 0.25, z).color(c, c, c, c).endVertex();
         tessellator.end();
 
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_LINES, DefaultVertexFormat.POSITION_COLOR);
         // Bottom left
         buffer.vertex(x - 0.50, y - 0.50, z).color(c, c, c, c).endVertex();
         buffer.vertex(x - 0.25, y - 0.25, z).color(c, c, c, c).endVertex();
@@ -923,10 +923,10 @@ public class RenderUtils
     }
 
     public static void renderBlockTargetingOverlaySimple(Entity entity, BlockPos pos, Direction side,
-            Color4f color, MatrixStack matrixStack, Minecraft mc)
+            Color4f color, PoseStack matrixStack, Minecraft mc)
     {
         Direction playerFacing = entity.getDirection();
-        Vector3d cameraPos = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 cameraPos = mc.gameRenderer.getMainCamera().getPosition();
 
         double x = pos.getX() + 0.5d - cameraPos.x;
         double y = pos.getY() + 0.5d - cameraPos.y;
@@ -934,11 +934,11 @@ public class RenderUtils
 
         RenderSystem.pushMatrix();
 
-        MatrixStack matrixStackTmp = new MatrixStack();
+        PoseStack matrixStackTmp = new PoseStack();
         blockTargetingOverlayTranslations(x, y, z, side, playerFacing, matrixStackTmp);
         RenderSystem.multMatrix(matrixStackTmp.last().pose());
 
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
 
         int a = (int) (color.a * 255f);
@@ -947,7 +947,7 @@ public class RenderUtils
         int b = (int) (color.b * 255f);
         int c = 255;
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         // Simple colored quad
         buffer.vertex(x - 0.5, y - 0.5, z).color(r, g, b, a).endVertex();
@@ -959,7 +959,7 @@ public class RenderUtils
 
         RenderSystem.lineWidth(1.6f);
 
-        buffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormat.POSITION_COLOR);
 
         // Middle rectangle
         buffer.vertex(x - 0.375, y - 0.375, z).color(c, c, c, c).endVertex();
@@ -973,7 +973,7 @@ public class RenderUtils
     }
 
     private static void blockTargetingOverlayTranslations(double x, double y, double z,
-            Direction side, Direction playerFacing, MatrixStack matrixStack)
+            Direction side, Direction playerFacing, PoseStack matrixStack)
     {
         matrixStack.translate(x, y, z);
 
@@ -1005,7 +1005,7 @@ public class RenderUtils
 
     public static void renderMapPreview(ItemStack stack, int x, int y, int dimensions)
     {
-        if (stack.getItem() instanceof FilledMapItem && GuiBase.isShiftDown())
+        if (stack.getItem() instanceof MapItem && GuiBase.isShiftDown())
         {
             RenderSystem.pushMatrix();
             RenderSystem.disableLighting();
@@ -1019,16 +1019,16 @@ public class RenderUtils
 
             bindTexture(fi.dy.masa.malilib.render.RenderUtils.TEXTURE_MAP_BACKGROUND);
 
-            Tessellator tessellator = Tessellator.getInstance();
+            Tesselator tessellator = Tesselator.getInstance();
             BufferBuilder buffer = tessellator.getBuilder();
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_TEX);
             buffer.vertex(x1, y2, z).uv(0.0F, 1.0F).endVertex();
             buffer.vertex(x2, y2, z).uv(1.0F, 1.0F).endVertex();
             buffer.vertex(x2, y1, z).uv(1.0F, 0.0F).endVertex();
             buffer.vertex(x1, y1, z).uv(0.0F, 0.0F).endVertex();
             tessellator.end();
 
-            MapData mapdata = FilledMapItem.getOrCreateSavedData(stack, mc().level);
+            MapItemSavedData mapdata = MapItem.getOrCreateSavedData(stack, mc().level);
 
             if (mapdata != null)
             {
@@ -1038,7 +1038,7 @@ public class RenderUtils
                 double scale = (double) (dimensions - 16) / 128.0D;
                 RenderSystem.translatef(x1, y1, z);
                 RenderSystem.scaled(scale, scale, 0);
-                mc().gameRenderer.getMapRenderer().render(new MatrixStack(), Minecraft.getInstance().renderBuffers().bufferSource(), mapdata, false, 0xF000F0);
+                mc().gameRenderer.getMapRenderer().render(new PoseStack(), Minecraft.getInstance().renderBuffers().bufferSource(), mapdata, false, 0xF000F0);
             }
 
             RenderSystem.enableLighting();
@@ -1082,7 +1082,7 @@ public class RenderUtils
             RenderSystem.enableDepthTest();
             RenderSystem.enableRescaleNormal();
 
-            IInventory inv = fi.dy.masa.malilib.util.InventoryUtils.getAsInventory(items);
+            Container inv = fi.dy.masa.malilib.util.InventoryUtils.getAsInventory(items);
             InventoryOverlay.renderInventoryStacks(type, inv, x + props.slotOffsetX, y + props.slotOffsetY, props.slotsPerRow, 0, -1, mc());
 
             RenderSystem.disableDepthTest();
@@ -1110,7 +1110,7 @@ public class RenderUtils
         }
     }
 
-    public static void renderModelInGui(int x, int y, IBakedModel model, BlockState state, float zLevel)
+    public static void renderModelInGui(int x, int y, BakedModel model, BlockState state, float zLevel)
     {
         if (state.getBlock() == Blocks.AIR)
         {
@@ -1118,8 +1118,8 @@ public class RenderUtils
         }
 
         RenderSystem.pushMatrix();
-        bindTexture(PlayerContainer.BLOCK_ATLAS);
-        mc().getTextureManager().getTexture(PlayerContainer.BLOCK_ATLAS).setBlurMipmap(false, false);
+        bindTexture(InventoryMenu.BLOCK_ATLAS);
+        mc().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setBlurMipmap(false, false);
 
         RenderSystem.enableRescaleNormal();
         RenderSystem.enableAlphaTest();
@@ -1136,7 +1136,7 @@ public class RenderUtils
 
         renderModel(model, state);
 
-        mc().getTextureManager().getTexture(PlayerContainer.BLOCK_ATLAS).restoreLastBlurMipmap();
+        mc().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).restoreLastBlurMipmap();
 
         RenderSystem.disableAlphaTest();
         RenderSystem.disableRescaleNormal();
@@ -1161,7 +1161,7 @@ public class RenderUtils
         }
     }
 
-    private static void renderModel(IBakedModel model, BlockState state)
+    private static void renderModel(BakedModel model, BlockState state)
     {
         RenderSystem.pushMatrix();
         RenderSystem.translatef(-0.5F, -0.5F, -0.5F);
@@ -1169,9 +1169,9 @@ public class RenderUtils
 
         if (model.isCustomRenderer() == false)
         {
-            Tessellator tessellator = Tessellator.getInstance();
+            Tesselator tessellator = Tesselator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuilder();
-            bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormat.BLOCK);
 
             for (Direction face : Direction.values())
             {

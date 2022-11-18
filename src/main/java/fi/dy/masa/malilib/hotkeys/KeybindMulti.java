@@ -8,8 +8,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings.Context;
@@ -325,13 +325,13 @@ public class KeybindMulti implements IKeybind
         return this.keyCodes.size() == 1 && this.keyCodes.get(0) == keyCode;
     }
 
-    public static int getKeyCode(KeyBinding keybind)
+    public static int getKeyCode(KeyMapping keybind)
     {
-        InputMappings.Input input = InputMappings.getKey(keybind.saveString());
-        return input.getType() == InputMappings.Type.MOUSE ? input.getValue() - 100 : input.getValue();
+        InputConstants.Key input = InputConstants.getKey(keybind.saveString());
+        return input.getType() == InputConstants.Type.MOUSE ? input.getValue() - 100 : input.getValue();
     }
 
-    public static boolean hotkeyMatchesKeybind(IHotkey hotkey, KeyBinding keybind)
+    public static boolean hotkeyMatchesKeybind(IHotkey hotkey, KeyMapping keybind)
     {
         int keyCode = getKeyCode(keybind);
         return hotkey.getKeybind().matches(keyCode);

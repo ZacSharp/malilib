@@ -8,8 +8,8 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
 import fi.dy.masa.malilib.MaLiLib;
 
 public class FileUtils
@@ -134,14 +134,14 @@ public class FileUtils
     }
 
     @Nullable
-    public static CompoundNBT readNBTFile(File file)
+    public static CompoundTag readNBTFile(File file)
     {
         if (file.exists() && file.isFile() && file.canRead())
         {
             try
             {
                 FileInputStream is = new FileInputStream(file);
-                CompoundNBT nbt = CompressedStreamTools.readCompressed(is);
+                CompoundTag nbt = NbtIo.readCompressed(is);
                 is.close();
                 return nbt;
             }

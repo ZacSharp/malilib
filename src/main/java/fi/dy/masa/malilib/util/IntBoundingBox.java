@@ -1,8 +1,8 @@
 package fi.dy.masa.malilib.util;
 
-import net.minecraft.nbt.IntArrayNBT;
-import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.core.Vec3i;
 
 public class IntBoundingBox
 {
@@ -23,7 +23,7 @@ public class IntBoundingBox
         this.maxZ = maxZ;
     }
 
-    public boolean containsPos(Vector3i pos)
+    public boolean containsPos(Vec3i pos)
     {
         return pos.getX() >= this.minX &&
                pos.getX() <= this.maxX &&
@@ -43,17 +43,17 @@ public class IntBoundingBox
                this.minY <= box.maxY;
     }
 
-    public MutableBoundingBox toVanillaBox()
+    public BoundingBox toVanillaBox()
     {
-        return new MutableBoundingBox(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
+        return new BoundingBox(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
     }
 
-    public IntArrayNBT toNBTIntArray()
+    public IntArrayTag toNBTIntArray()
     {
-        return new IntArrayNBT(new int[] { this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ });
+        return new IntArrayTag(new int[] { this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ });
     }
 
-    public static IntBoundingBox fromVanillaBox(MutableBoundingBox box)
+    public static IntBoundingBox fromVanillaBox(BoundingBox box)
     {
         return createProper(box.x0, box.y0, box.z0, box.x1, box.y1, box.z1);
     }
