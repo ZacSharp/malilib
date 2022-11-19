@@ -2,11 +2,11 @@ package fi.dy.masa.malilib.event;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.Framebuffer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Matrix4f;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.ItemStack;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
 import fi.dy.masa.malilib.interfaces.IRenderDispatcher;
 import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.util.InfoUtils;
@@ -54,7 +54,7 @@ public class RenderEventHandler implements IRenderDispatcher
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public void onRenderGameOverlayPost(MatrixStack matrixStack, MinecraftClient mc, float partialTicks)
+    public void onRenderGameOverlayPost(PoseStack matrixStack, Minecraft mc, float partialTicks)
     {
         mc.getProfiler().push("malilib_rendergameoverlaypost");
 
@@ -78,7 +78,7 @@ public class RenderEventHandler implements IRenderDispatcher
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public void onRenderTooltipLast(MatrixStack matrixStack, ItemStack stack, int x, int y)
+    public void onRenderTooltipLast(PoseStack matrixStack, ItemStack stack, int x, int y)
     {
         if (this.tooltipLastRenderers.isEmpty() == false)
         {
@@ -92,17 +92,17 @@ public class RenderEventHandler implements IRenderDispatcher
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public void onRenderWorldLast(MatrixStack matrixStack, Matrix4f projMatrix, MinecraftClient mc)
+    public void onRenderWorldLast(PoseStack matrixStack, Matrix4f projMatrix, Minecraft mc)
     {
         if (this.worldLastRenderers.isEmpty() == false)
         {
-            mc.getProfiler().swap("malilib_renderworldlast");
+            mc.getProfiler().popPush("malilib_renderworldlast");
 
-            Framebuffer fb = MinecraftClient.isFabulousGraphicsOrBetter() ? mc.worldRenderer.getTranslucentFramebuffer() : null;
+            RenderTarget fb = Minecraft.useShaderTransparency() ? mc.levelRenderer.getTranslucentTarget() : null;
 
             if (fb != null)
             {
-                fb.beginWrite(false);
+                fb.bindWrite(false);
             }
 
             for (IRenderer renderer : this.worldLastRenderers)
@@ -114,7 +114,7 @@ public class RenderEventHandler implements IRenderDispatcher
 
             if (fb != null)
             {
-                mc.getFramebuffer().beginWrite(false);
+                mc.getMainRenderTarget().bindWrite(false);
             }
         }
     }

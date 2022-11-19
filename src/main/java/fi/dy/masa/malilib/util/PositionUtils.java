@@ -1,10 +1,10 @@
 package fi.dy.masa.malilib.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Direction.AxisDirection;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 public class PositionUtils
 {
@@ -12,16 +12,16 @@ public class PositionUtils
     public static final Direction[] HORIZONTAL_DIRECTIONS = new Direction[] { Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST };
     public static final Direction[] VERTICAL_DIRECTIONS = new Direction[] { Direction.DOWN, Direction.UP };
 
-    public static Vec3d modifyValue(CoordinateType type, Vec3d valueIn, double amount)
+    public static Vec3 modifyValue(CoordinateType type, Vec3 valueIn, double amount)
     {
         switch (type)
         {
             case X:
-                return new Vec3d(valueIn.x + amount, valueIn.y         , valueIn.z         );
+                return new Vec3(valueIn.x + amount, valueIn.y         , valueIn.z         );
             case Y:
-                return new Vec3d(valueIn.x         , valueIn.y + amount, valueIn.z         );
+                return new Vec3(valueIn.x         , valueIn.y + amount, valueIn.z         );
             case Z:
-                return new Vec3d(valueIn.x         , valueIn.y         , valueIn.z + amount);
+                return new Vec3(valueIn.x         , valueIn.y         , valueIn.z + amount);
         }
 
         return valueIn;
@@ -42,16 +42,16 @@ public class PositionUtils
         return valueIn;
     }
 
-    public static Vec3d setValue(CoordinateType type, Vec3d valueIn, double newValue)
+    public static Vec3 setValue(CoordinateType type, Vec3 valueIn, double newValue)
     {
         switch (type)
         {
             case X:
-                return new Vec3d(newValue , valueIn.y, valueIn.z);
+                return new Vec3(newValue , valueIn.y, valueIn.z);
             case Y:
-                return new Vec3d(valueIn.x, newValue , valueIn.z);
+                return new Vec3(valueIn.x, newValue , valueIn.z);
             case Z:
-                return new Vec3d(valueIn.x, valueIn.y, newValue);
+                return new Vec3(valueIn.x, valueIn.y, newValue);
         }
 
         return valueIn;
@@ -96,16 +96,16 @@ public class PositionUtils
      */
     public static Direction getClosestLookingDirection(Entity entity, float verticalThreshold)
     {
-        if (entity.getPitch() >= verticalThreshold)
+        if (entity.getXRot() >= verticalThreshold)
         {
             return Direction.DOWN;
         }
-        else if (entity.getYaw() <= -verticalThreshold)
+        else if (entity.getYRot() <= -verticalThreshold)
         {
             return Direction.UP;
         }
 
-        return entity.getHorizontalFacing();
+        return entity.getDirection();
     }
 
     /**
@@ -131,21 +131,21 @@ public class PositionUtils
         double x = entity.getX();
         double y = entity.getY();
         double z = entity.getZ();
-        double w = entity.getWidth();
+        double w = entity.getBbWidth();
         BlockPos pos = new BlockPos(x, y, z);
 
-        if (entity.getPitch() >= verticalThreshold)
+        if (entity.getXRot() >= verticalThreshold)
         {
-            return pos.down(1);
+            return pos.below(1);
         }
-        else if (entity.getPitch() <= -verticalThreshold)
+        else if (entity.getXRot() <= -verticalThreshold)
         {
             return new BlockPos(x, Math.ceil(entity.getBoundingBox().maxY), z);
         }
 
-        y = Math.floor(y + entity.getStandingEyeHeight());
+        y = Math.floor(y + entity.getEyeHeight());
 
-        switch (entity.getHorizontalFacing())
+        switch (entity.getDirection())
         {
             case EAST:
                 return new BlockPos((int) Math.ceil( x + w / 2),     (int) y, (int) Math.floor(z));
@@ -167,7 +167,7 @@ public class PositionUtils
      * @param facing
      * @return
      */
-    public static Vec3d getHitVecCenter(BlockPos basePos, Direction facing)
+    public static Vec3 getHitVecCenter(BlockPos basePos, Direction facing)
     {
         int x = basePos.getX();
         int y = basePos.getY();
@@ -175,13 +175,13 @@ public class PositionUtils
 
         switch (facing)
         {
-            case UP:    return new Vec3d(x + 0.5, y + 1  , z + 0.5);
-            case DOWN:  return new Vec3d(x + 0.5, y      , z + 0.5);
-            case NORTH: return new Vec3d(x + 0.5, y + 0.5, z      );
-            case SOUTH: return new Vec3d(x + 0.5, y + 0.5, z + 1  );
-            case WEST:  return new Vec3d(x      , y + 0.5, z      );
-            case EAST:  return new Vec3d(x + 1  , y + 0.5, z + 1);
-            default:    return new Vec3d(x, y, z);
+            case UP:    return new Vec3(x + 0.5, y + 1  , z + 0.5);
+            case DOWN:  return new Vec3(x + 0.5, y      , z + 0.5);
+            case NORTH: return new Vec3(x + 0.5, y + 0.5, z      );
+            case SOUTH: return new Vec3(x + 0.5, y + 0.5, z + 1  );
+            case WEST:  return new Vec3(x      , y + 0.5, z      );
+            case EAST:  return new Vec3(x + 1  , y + 0.5, z + 1);
+            default:    return new Vec3(x, y, z);
         }
     }
 
@@ -194,9 +194,9 @@ public class PositionUtils
      * @param hitVec
      * @return
      */
-    public static HitPart getHitPart(Direction originalSide, Direction playerFacingH, BlockPos pos, Vec3d hitVec)
+    public static HitPart getHitPart(Direction originalSide, Direction playerFacingH, BlockPos pos, Vec3 hitVec)
     {
-        Vec3d positions = getHitPartPositions(originalSide, playerFacingH, pos, hitVec);
+        Vec3 positions = getHitPartPositions(originalSide, playerFacingH, pos, hitVec);
         double posH = positions.x;
         double posV = positions.y;
         double offH = Math.abs(posH - 0.5d);
@@ -219,7 +219,7 @@ public class PositionUtils
         }
     }
 
-    private static Vec3d getHitPartPositions(Direction originalSide, Direction playerFacingH, BlockPos pos, Vec3d hitVec)
+    private static Vec3 getHitPartPositions(Direction originalSide, Direction playerFacingH, BlockPos pos, Vec3 hitVec)
     {
         double x = hitVec.x - pos.getX();
         double y = hitVec.y - pos.getY();
@@ -260,17 +260,17 @@ public class PositionUtils
                 break;
             case NORTH:
             case SOUTH:
-                posH = originalSide.getDirection() == AxisDirection.POSITIVE ? x : 1.0d - x;
+                posH = originalSide.getAxisDirection() == AxisDirection.POSITIVE ? x : 1.0d - x;
                 posV = y;
                 break;
             case WEST:
             case EAST:
-                posH = originalSide.getDirection() == AxisDirection.NEGATIVE ? z : 1.0d - z;
+                posH = originalSide.getAxisDirection() == AxisDirection.NEGATIVE ? z : 1.0d - z;
                 posV = y;
                 break;
         }
 
-        return new Vec3d(posH, posV, 0);
+        return new Vec3(posH, posV, 0);
     }
 
     /**
@@ -281,9 +281,9 @@ public class PositionUtils
      * @param hitVec
      * @return
      */
-    public static Direction getTargetedDirection(Direction side, Direction playerFacingH, BlockPos pos, Vec3d hitVec)
+    public static Direction getTargetedDirection(Direction side, Direction playerFacingH, BlockPos pos, Vec3 hitVec)
     {
-        Vec3d positions = getHitPartPositions(side, playerFacingH, pos, hitVec);
+        Vec3 positions = getHitPartPositions(side, playerFacingH, pos, hitVec);
         double posH = positions.x;
         double posV = positions.y;
         double offH = Math.abs(posH - 0.5d);
@@ -295,7 +295,7 @@ public class PositionUtils
             {
                 if (offH > offV)
                 {
-                    return posH < 0.5d ? playerFacingH.rotateYCounterclockwise() : playerFacingH.rotateYClockwise();
+                    return posH < 0.5d ? playerFacingH.getCounterClockWise() : playerFacingH.getClockWise();
                 }
                 else
                 {
@@ -313,7 +313,7 @@ public class PositionUtils
             {
                 if (offH > offV)
                 {
-                    return posH < 0.5d ? side.rotateYClockwise() : side.rotateYCounterclockwise();
+                    return posH < 0.5d ? side.getClockWise() : side.getCounterClockWise();
                 }
                 else
                 {

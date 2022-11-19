@@ -3,10 +3,10 @@ package fi.dy.masa.malilib.render.shader;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Identifier;
 import fi.dy.masa.malilib.MaLiLib;
 
 /**
@@ -15,12 +15,12 @@ import fi.dy.masa.malilib.MaLiLib;
  */
 public class ShaderProgram
 {
-    private final MinecraftClient mc;
+    private final Minecraft mc;
     private int program;
 
     public ShaderProgram(final String domain, final String vertShaderFilename, final String fragShaderFilename)
     {
-        this.mc = MinecraftClient.getInstance();
+        this.mc = Minecraft.getInstance();
 
         try
         {
@@ -85,7 +85,7 @@ public class ShaderProgram
             return 0;
         }
 
-        final String code = loadFile(new Identifier(domain, filename));
+        final String code = loadFile(new ResourceLocation(domain, filename));
 
         if (code == null)
         {
@@ -106,7 +106,7 @@ public class ShaderProgram
         return handle;
     }
 
-    private String loadFile(final Identifier resourceLocation)
+    private String loadFile(final ResourceLocation resourceLocation)
     {
         try
         {

@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.render.RenderUtils;
 
 public class WidgetStringListEntry extends WidgetListEntryBase<String>
@@ -15,7 +15,7 @@ public class WidgetStringListEntry extends WidgetListEntryBase<String>
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void render(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
 

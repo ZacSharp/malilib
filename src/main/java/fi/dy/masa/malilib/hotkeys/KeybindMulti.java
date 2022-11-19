@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import javax.annotation.Nullable;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import com.mojang.blaze3d.platform.InputConstants;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.Message;
@@ -175,7 +175,7 @@ public class KeybindMulti implements IKeybind
             if (this.keyCodes.contains(KeyCodes.KEY_F3))
             {
                 // Prevent the debug GUI from opening after the F3 key is released
-                ((IF3KeyStateSetter) MinecraftClient.getInstance().keyboard).setF3KeyState(true);
+                ((IF3KeyStateSetter) Minecraft.getInstance().keyboardHandler).setF3KeyState(true);
             }
 
             KeyAction activateOn = this.settings.getActivateOn();
@@ -333,13 +333,13 @@ public class KeybindMulti implements IKeybind
         return this.keyCodes.size() == 1 && this.keyCodes.get(0) == keyCode;
     }
 
-    public static int getKeyCode(KeyBinding keybind)
+    public static int getKeyCode(KeyMapping keybind)
     {
-        InputUtil.Key input = InputUtil.fromTranslationKey(keybind.getBoundKeyTranslationKey());
-        return input.getCategory() == InputUtil.Type.MOUSE ? input.getCode() - 100 : input.getCode();
+        InputConstants.Key input = InputConstants.getKey(keybind.saveString());
+        return input.getType() == InputConstants.Type.MOUSE ? input.getValue() - 100 : input.getValue();
     }
 
-    public static boolean hotkeyMatchesKeybind(IHotkey hotkey, KeyBinding keybind)
+    public static boolean hotkeyMatchesKeybind(IHotkey hotkey, KeyMapping keybind)
     {
         int keyCode = getKeyCode(keybind);
         return hotkey.getKeybind().matches(keyCode);
@@ -418,7 +418,7 @@ public class KeybindMulti implements IKeybind
 
     public static boolean isKeyDown(int keyCode)
     {
-        long window = MinecraftClient.getInstance().getWindow().getHandle();
+        long window = Minecraft.getInstance().getWindow().getWindow();
 
         if (keyCode >= 0)
         {

@@ -1,8 +1,8 @@
 package fi.dy.masa.malilib.gui;
 
 import javax.annotation.Nullable;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
@@ -26,11 +26,11 @@ public abstract class GuiTextInputBase extends GuiDialogBase
         this.centerOnScreen();
 
         int width = Math.min(maxTextLength * 10, 240);
-        this.textField = new GuiTextFieldGeneric(this.dialogLeft + 12, this.dialogTop + 40, width, 20, this.textRenderer);
+        this.textField = new GuiTextFieldGeneric(this.dialogLeft + 12, this.dialogTop + 40, width, 20, this.font);
         this.textField.setMaxLength(maxTextLength);
         this.textField.setFocused(true);
-        this.textField.setText(this.originalText);
-        this.setZOffset(1);
+        this.textField.setValue(this.originalText);
+        this.setBlitOffset(1);
     }
 
     @Override
@@ -43,7 +43,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
         x += this.createButton(x, y, ButtonType.RESET) + 2;
         this.createButton(x, y, ButtonType.CANCEL);
 
-        this.mc.keyboard.setRepeatEvents(true);
+        this.mc.keyboardHandler.setSendRepeatsToGui(true);
     }
 
     protected int createButton(int x, int y, ButtonType type)
@@ -60,15 +60,15 @@ public abstract class GuiTextInputBase extends GuiDialogBase
     }
 
     @Override
-    public void drawContents(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void drawContents(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         if (this.getParent() != null)
         {
             this.getParent().render(matrixStack, mouseX, mouseY, partialTicks);
         }
 
-        matrixStack.push();
-        matrixStack.translate(0, 0, this.getZOffset());
+        matrixStack.pushPose();
+        matrixStack.translate(0, 0, this.getBlitOffset());
 
         RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xE0000000, COLOR_HORIZONTAL_BAR);
 
@@ -79,7 +79,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
         this.textField.render(matrixStack, mouseX, mouseY, partialTicks);
 
         this.drawButtons(mouseX, mouseY, partialTicks, matrixStack);
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     @Override
@@ -88,7 +88,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
         if (keyCode == KeyCodes.KEY_ENTER)
         {
             // Only close the GUI if the value was successfully applied
-            if (this.applyValue(this.textField.getText()))
+            if (this.applyValue(this.textField.getValue()))
             {
                 GuiBase.openGui(this.getParent());
             }
@@ -155,7 +155,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
             if (this.type == ButtonType.OK)
             {
                 // Only close the GUI if the value was successfully applied
-                if (this.gui.applyValue(this.gui.textField.getText()))
+                if (this.gui.applyValue(this.gui.textField.getValue()))
                 {
                     GuiBase.openGui(this.gui.getParent());
                 }
@@ -166,7 +166,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
             }
             else if (this.type == ButtonType.RESET)
             {
-                this.gui.textField.setText(this.gui.originalText);
+                this.gui.textField.setValue(this.gui.originalText);
                 this.gui.textField.setFocused(true);
             }
         }

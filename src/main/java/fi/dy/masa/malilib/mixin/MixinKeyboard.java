@@ -6,29 +6,29 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.minecraft.client.Keyboard;
-import net.minecraft.client.MinecraftClient;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.util.IF3KeyStateSetter;
+import net.minecraft.client.KeyboardHandler;
+import net.minecraft.client.Minecraft;
 
-@Mixin(Keyboard.class)
+@Mixin(KeyboardHandler.class)
 public abstract class MixinKeyboard implements IF3KeyStateSetter
 {
     @Shadow
     @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
 
     @Shadow
-    private boolean switchF3State;
+    private boolean handledDebugKey;
 
     @Override
     public void setF3KeyState(boolean value)
     {
-        this.switchF3State = value;
+        this.handledDebugKey = value;
     }
 
-    @Inject(method = "onKey", cancellable = true,
-            at = @At(value = "FIELD", target = "Lnet/minecraft/client/Keyboard;debugCrashStartTime:J", ordinal = 0))
+    @Inject(method = "keyPress", cancellable = true,
+            at = @At(value = "FIELD", target = "Lnet/minecraft/client/KeyboardHandler;debugCrashKeyTime:J", ordinal = 0))
     private void onKeyboardInput(long windowPointer, int key, int scanCode, int action, int modifiers, CallbackInfo ci)
     {
         if (((InputEventHandler) InputEventHandler.getInputManager()).onKeyInput(key, scanCode, modifiers, action != 0))

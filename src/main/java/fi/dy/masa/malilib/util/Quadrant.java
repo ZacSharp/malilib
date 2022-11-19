@@ -1,7 +1,7 @@
 package fi.dy.masa.malilib.util;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 public enum Quadrant
 {
@@ -10,12 +10,12 @@ public enum Quadrant
     SOUTH_WEST,
     SOUTH_EAST;
 
-    public static Quadrant getQuadrant(BlockPos pos, Vec3d center)
+    public static Quadrant getQuadrant(BlockPos pos, Vec3 center)
     {
         return getQuadrant(pos.getX(), pos.getZ(), center);
     }
 
-    public static Quadrant getQuadrant(int x, int z, Vec3d center)
+    public static Quadrant getQuadrant(int x, int z, Vec3 center)
     {
         // West
         if (x <= center.x)
@@ -47,7 +47,7 @@ public enum Quadrant
         }
     }
 
-    public static Quadrant getQuadrant(double x, double z, Vec3d center)
+    public static Quadrant getQuadrant(double x, double z, Vec3 center)
     {
         // West
         if (x <= center.x)

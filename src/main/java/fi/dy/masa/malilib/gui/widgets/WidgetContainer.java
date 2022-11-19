@@ -3,7 +3,7 @@ package fi.dy.masa.malilib.gui.widgets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.render.RenderUtils;
@@ -165,18 +165,18 @@ public abstract class WidgetContainer extends WidgetBase
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void render(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         this.drawSubWidgets(mouseX, mouseY, matrixStack);
     }
 
     @Override
-    public void postRenderHovered(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void postRenderHovered(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         this.drawHoveredSubWidget(mouseX, mouseY, matrixStack);
     }
 
-    protected void drawSubWidgets(int mouseX, int mouseY, MatrixStack matrixStack)
+    protected void drawSubWidgets(int mouseX, int mouseY, PoseStack matrixStack)
     {
         this.hoveredSubWidget = null;
 
@@ -194,7 +194,7 @@ public abstract class WidgetContainer extends WidgetBase
         }
     }
 
-    protected void drawHoveredSubWidget(int mouseX, int mouseY, MatrixStack matrixStack)
+    protected void drawHoveredSubWidget(int mouseX, int mouseY, PoseStack matrixStack)
     {
         if (this.hoveredSubWidget != null)
         {

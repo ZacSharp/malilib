@@ -1,7 +1,7 @@
 package fi.dy.masa.malilib.gui.widgets;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
 import fi.dy.masa.malilib.gui.LeftRight;
@@ -32,12 +32,12 @@ public class WidgetSearchBar extends WidgetBase
 
     public String getFilter()
     {
-        return this.searchOpen ? this.searchBox.getText() : "";
+        return this.searchOpen ? this.searchBox.getValue() : "";
     }
 
     public boolean hasFilter()
     {
-        return this.searchOpen && this.searchBox.getText().isEmpty() == false;
+        return this.searchOpen && this.searchBox.getValue().isEmpty() == false;
     }
 
     public boolean isSearchOpen()
@@ -84,7 +84,7 @@ public class WidgetSearchBar extends WidgetBase
             {
                 if (GuiBase.isShiftDown())
                 {
-                    this.mc.currentScreen.onClose();
+                    this.mc.screen.onClose();
                 }
 
                 this.searchOpen = false;
@@ -106,11 +106,11 @@ public class WidgetSearchBar extends WidgetBase
                 return true;
             }
         }
-        else if (SharedConstants.isValidChar(charIn))
+        else if (SharedConstants.isAllowedChatCharacter(charIn))
         {
             this.searchOpen = true;
             this.searchBox.setFocused(true);
-            this.searchBox.setText("");
+            this.searchBox.setValue("");
             this.searchBox.charTyped(charIn, modifiers);
 
             return true;
@@ -120,7 +120,7 @@ public class WidgetSearchBar extends WidgetBase
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void render(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
         this.iconSearch.render(false, this.iconSearch.isMouseOver(mouseX, mouseY));

@@ -3,8 +3,8 @@ package fi.dy.masa.malilib.gui.widgets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.GuiScrollBar;
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
 import fi.dy.masa.malilib.gui.MaLiLibIcons;
@@ -79,7 +79,7 @@ public class WidgetDropDownList<T> extends WidgetBase
         this.searchBar.getTextField().setY(y - 18);
     }
 
-    protected int getRequiredWidth(int width, List<T> entries, MinecraftClient mc)
+    protected int getRequiredWidth(int width, List<T> entries, Minecraft mc)
     {
         if (width == -1)
         {
@@ -157,7 +157,7 @@ public class WidgetDropDownList<T> extends WidgetBase
 
             if (this.isOpen == false)
             {
-                this.searchBar.getTextField().setText("");
+                this.searchBar.getTextField().setValue("");
                 this.updateFilteredEntries();
             }
         }
@@ -208,7 +208,7 @@ public class WidgetDropDownList<T> extends WidgetBase
     protected void updateFilteredEntries()
     {
         this.filteredEntries.clear();
-        String filterText = this.searchBar.getTextField().getText();
+        String filterText = this.searchBar.getTextField().getValue();
 
         if (this.isOpen && filterText.isEmpty() == false)
         {
@@ -253,11 +253,11 @@ public class WidgetDropDownList<T> extends WidgetBase
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void render(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
 
-        matrixStack.push();
+        matrixStack.pushPose();
         matrixStack.translate(0, 0, 1);
         List<T> list = this.filteredEntries;
         int visibleEntries = Math.min(this.maxVisibleEntries, list.size());
@@ -273,7 +273,7 @@ public class WidgetDropDownList<T> extends WidgetBase
 
         if (this.isOpen)
         {
-            if (this.searchBar.getTextField().getText().isEmpty() == false)
+            if (this.searchBar.getTextField().getValue().isEmpty() == false)
             {
                 this.searchBar.draw(mouseX, mouseY, matrixStack);
             }
@@ -315,7 +315,7 @@ public class WidgetDropDownList<T> extends WidgetBase
             RenderUtils.drawTexturedRect(this.x + this.width - 16, this.y + 2, i.getU() + i.getWidth(), i.getV(), i.getWidth(), i.getHeight());
         }
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     protected static class TextFieldListener implements ITextFieldListener<GuiTextFieldGeneric>

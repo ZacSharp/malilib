@@ -1,9 +1,9 @@
 package fi.dy.masa.malilib.gui.widgets;
 
 import javax.annotation.Nullable;
+import net.minecraft.client.gui.screens.Screen;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigBoolean;
@@ -201,7 +201,7 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
             {
                 if (this.textField != null)
                 {
-                    modified |= this.initialStringValue.equals(this.textField.getTextField().getText()) == false;
+                    modified |= this.initialStringValue.equals(this.textField.getTextField().getValue()) == false;
                 }
 
                 if (this.initialKeybindSettings != null && this.initialKeybindSettings.equals(((IHotkey) config).getKeybind().getSettings()) == false)
@@ -228,7 +228,7 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
 
             if (this.textField != null && this.hasPendingModifications())
             {
-                config.setValueFromString(this.textField.getTextField().getText());
+                config.setValueFromString(this.textField.getTextField().getValue());
             }
 
             this.lastAppliedValue = config.getStringValue();
@@ -254,7 +254,7 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
     {
         GuiTextFieldGeneric field = this.createTextField(x, y + 1, configWidth - 4, configHeight - 3);
         field.setMaxLength(this.maxTextfieldTextLength);
-        field.setText(config.getStringValue());
+        field.setValue(config.getStringValue());
 
         ButtonGeneric resetButton = this.createResetButton(resetX, y, config);
         ConfigOptionChangeListenerTextField listenerChange = new ConfigOptionChangeListenerTextField(config, field, resetButton);
@@ -299,7 +299,7 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, MatrixStack matrixStack)
+    public void render(int mouseX, int mouseY, boolean selected, PoseStack matrixStack)
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
 

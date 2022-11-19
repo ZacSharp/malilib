@@ -7,8 +7,8 @@ import java.util.Locale;
 import java.util.Set;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import fi.dy.masa.malilib.MaLiLib;
 
@@ -18,12 +18,12 @@ public class FileUtils
 
     public static File getConfigDirectory()
     {
-        return new File(MinecraftClient.getInstance().runDirectory, "config");
+        return new File(Minecraft.getInstance().gameDirectory, "config");
     }
 
     public static File getMinecraftDirectory()
     {
-        return MinecraftClient.getInstance().runDirectory;
+        return Minecraft.getInstance().gameDirectory;
     }
 
     /**
@@ -134,14 +134,14 @@ public class FileUtils
     }
 
     @Nullable
-    public static NbtCompound readNBTFile(File file)
+    public static CompoundTag readNBTFile(File file)
     {
         if (file.exists() && file.isFile() && file.canRead())
         {
             try
             {
                 FileInputStream is = new FileInputStream(file);
-                NbtCompound nbt = NbtIo.readCompressed(is);
+                CompoundTag nbt = NbtIo.readCompressed(is);
                 is.close();
                 return nbt;
             }

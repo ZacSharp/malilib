@@ -1,9 +1,9 @@
 package fi.dy.masa.malilib.util;
 
-import net.minecraft.nbt.NbtIntArray;
-import net.minecraft.util.math.BlockBox;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 public class IntBoundingBox
 {
@@ -68,19 +68,19 @@ public class IntBoundingBox
         return 0;
     }
 
-    public BlockBox toVanillaBox()
+    public BoundingBox toVanillaBox()
     {
-        return new BlockBox(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
+        return new BoundingBox(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
     }
 
-    public NbtIntArray toNBTIntArray()
+    public IntArrayTag toNBTIntArray()
     {
-        return new NbtIntArray(new int[] { this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ });
+        return new IntArrayTag(new int[] { this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ });
     }
 
-    public static IntBoundingBox fromVanillaBox(BlockBox box)
+    public static IntBoundingBox fromVanillaBox(BoundingBox box)
     {
-        return createProper(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ());
+        return createProper(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ());
     }
 
     public static IntBoundingBox createProper(int x1, int y1, int z1, int x2, int y2, int z2)

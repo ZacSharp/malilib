@@ -1,21 +1,21 @@
 package fi.dy.masa.malilib.util;
 
 import javax.annotation.Nullable;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtDouble;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.phys.Vec3;
 
 public class NBTUtils
 {
-    public static NbtCompound createBlockPosTag(Vec3i pos)
+    public static CompoundTag createBlockPosTag(Vec3i pos)
     {
-        return writeBlockPosToTag(pos, new NbtCompound());
+        return writeBlockPosToTag(pos, new CompoundTag());
     }
 
-    public static NbtCompound writeBlockPosToTag(Vec3i pos, NbtCompound tag)
+    public static CompoundTag writeBlockPosToTag(Vec3i pos, CompoundTag tag)
     {
         tag.putInt("x", pos.getX());
         tag.putInt("y", pos.getY());
@@ -24,7 +24,7 @@ public class NBTUtils
     }
 
     @Nullable
-    public static BlockPos readBlockPos(@Nullable NbtCompound tag)
+    public static BlockPos readBlockPos(@Nullable CompoundTag tag)
     {
         if (tag != null &&
             tag.contains("x", Constants.NBT.TAG_INT) &&
@@ -37,7 +37,7 @@ public class NBTUtils
         return null;
     }
 
-    public static NbtCompound writeVec3dToTag(Vec3d vec, NbtCompound tag)
+    public static CompoundTag writeVec3dToTag(Vec3 vec, CompoundTag tag)
     {
         tag.putDouble("dx", vec.x);
         tag.putDouble("dy", vec.y);
@@ -45,42 +45,42 @@ public class NBTUtils
         return tag;
     }
 
-    public static NbtCompound writeEntityPositionToTag(Vec3d pos, NbtCompound tag)
+    public static CompoundTag writeEntityPositionToTag(Vec3 pos, CompoundTag tag)
     {
-        NbtList posList = new NbtList();
+        ListTag posList = new ListTag();
 
-        posList.add(NbtDouble.of(pos.x));
-        posList.add(NbtDouble.of(pos.y));
-        posList.add(NbtDouble.of(pos.z));
+        posList.add(DoubleTag.valueOf(pos.x));
+        posList.add(DoubleTag.valueOf(pos.y));
+        posList.add(DoubleTag.valueOf(pos.z));
         tag.put("Pos", posList);
 
         return tag;
     }
 
     @Nullable
-    public static Vec3d readVec3d(@Nullable NbtCompound tag)
+    public static Vec3 readVec3d(@Nullable CompoundTag tag)
     {
         if (tag != null &&
             tag.contains("dx", Constants.NBT.TAG_DOUBLE) &&
             tag.contains("dy", Constants.NBT.TAG_DOUBLE) &&
             tag.contains("dz", Constants.NBT.TAG_DOUBLE))
         {
-            return new Vec3d(tag.getDouble("dx"), tag.getDouble("dy"), tag.getDouble("dz"));
+            return new Vec3(tag.getDouble("dx"), tag.getDouble("dy"), tag.getDouble("dz"));
         }
 
         return null;
     }
 
     @Nullable
-    public static Vec3d readEntityPositionFromTag(@Nullable NbtCompound tag)
+    public static Vec3 readEntityPositionFromTag(@Nullable CompoundTag tag)
     {
         if (tag != null && tag.contains("Pos", Constants.NBT.TAG_LIST))
         {
-            NbtList tagList = tag.getList("Pos", Constants.NBT.TAG_DOUBLE);
+            ListTag tagList = tag.getList("Pos", Constants.NBT.TAG_DOUBLE);
 
-            if (tagList.getHeldType() == Constants.NBT.TAG_DOUBLE && tagList.size() == 3)
+            if (tagList.getElementType() == Constants.NBT.TAG_DOUBLE && tagList.size() == 3)
             {
-                return new Vec3d(tagList.getDouble(0), tagList.getDouble(1), tagList.getDouble(2));
+                return new Vec3(tagList.getDouble(0), tagList.getDouble(1), tagList.getDouble(2));
             }
         }
 

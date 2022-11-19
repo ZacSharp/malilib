@@ -1,8 +1,8 @@
 package fi.dy.masa.malilib.util;
 
 import javax.annotation.Nullable;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
 
 public class EntityUtils
 {
@@ -13,7 +13,7 @@ public class EntityUtils
     @Nullable
     public static Entity getCameraEntity()
     {
-        MinecraftClient mc = MinecraftClient.getInstance();
+        Minecraft mc = Minecraft.getInstance();
         Entity entity = mc.getCameraEntity();
 
         if (entity == null)

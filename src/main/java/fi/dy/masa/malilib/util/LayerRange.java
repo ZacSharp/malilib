@@ -1,13 +1,13 @@
 package fi.dy.masa.malilib.util;
 
 import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Direction.Axis;
-import net.minecraft.util.math.MathHelper;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.interfaces.IRangeChangeListener;
 
@@ -221,9 +221,9 @@ public class LayerRange
     {
         switch (this.axis)
         {
-            case X: return MathHelper.floor(entity.getX());
-            case Y: return MathHelper.floor(entity.getY());
-            case Z: return MathHelper.floor(entity.getZ());
+            case X: return Mth.floor(entity.getX());
+            case Y: return Mth.floor(entity.getY());
+            case Z: return Mth.floor(entity.getZ());
         }
 
         return 0;
@@ -451,7 +451,7 @@ public class LayerRange
 
     protected int getWorldLimitsClampedValue(int value, IntBoundingBox limits)
     {
-        return MathHelper.clamp(value,
+        return Mth.clamp(value,
                                 limits.getMinValueForAxis(this.axis),
                                 limits.getMaxValueForAxis(this.axis));
     }
@@ -588,7 +588,7 @@ public class LayerRange
     {
         if (this.axis == axis)
         {
-            return MathHelper.clamp(value, this.getLayerMin(), this.getLayerMax());
+            return Mth.clamp(value, this.getLayerMin(), this.getLayerMax());
         }
 
         //return MathHelper.clamp(value, limits.getMinValueForAxis(axis), limits.getMaxValueForAxis(axis));
@@ -694,7 +694,7 @@ public class LayerRange
     public void fromJson(JsonObject obj)
     {
         this.layerMode = LayerMode.fromStringStatic(JsonUtils.getString(obj, "mode"));
-        this.axis = Direction.Axis.fromName(JsonUtils.getString(obj, "axis"));
+        this.axis = Direction.Axis.byName(JsonUtils.getString(obj, "axis"));
         if (this.axis == null) { this.axis = Direction.Axis.Y; }
 
         this.layerSingle = JsonUtils.getInteger(obj, "layer_single");

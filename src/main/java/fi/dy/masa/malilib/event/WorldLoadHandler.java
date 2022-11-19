@@ -3,8 +3,8 @@ package fi.dy.masa.malilib.event;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.interfaces.IWorldLoadListener;
 
@@ -53,7 +53,7 @@ public class WorldLoadHandler implements IWorldLoadManager
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public void onWorldLoadPre(@Nullable ClientWorld worldBefore, @Nullable ClientWorld worldAfter, MinecraftClient mc)
+    public void onWorldLoadPre(@Nullable ClientLevel worldBefore, @Nullable ClientLevel worldAfter, Minecraft mc)
     {
         if (this.worldLoadPreHandlers.isEmpty() == false)
         {
@@ -67,7 +67,7 @@ public class WorldLoadHandler implements IWorldLoadManager
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public void onWorldLoadPost(@Nullable ClientWorld worldBefore, @Nullable ClientWorld worldAfter, MinecraftClient mc)
+    public void onWorldLoadPost(@Nullable ClientLevel worldBefore, @Nullable ClientLevel worldAfter, Minecraft mc)
     {
         // Save all the configs when exiting a world
         if (worldBefore != null && worldAfter == null)

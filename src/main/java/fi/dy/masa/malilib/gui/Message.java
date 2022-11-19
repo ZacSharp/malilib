@@ -2,7 +2,7 @@ package fi.dy.masa.malilib.gui;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.util.StringUtils;
 
 public class Message
@@ -43,7 +43,7 @@ public class Message
      * Renders the lines for this message
      * @return the y coordinate of the next message
      */
-    public int renderAt(int x, int y, int textColor, MatrixStack matrixStack)
+    public int renderAt(int x, int y, int textColor, PoseStack matrixStack)
     {
         String format = this.getFormatCode();
 

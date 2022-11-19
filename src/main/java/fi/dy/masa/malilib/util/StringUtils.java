@@ -71,15 +71,15 @@ public class StringUtils
         return str;
     }
 
-    public static void sendOpenFileChatMessage(net.minecraft.entity.Entity sender, String messageKey, File file)
+    public static void sendOpenFileChatMessage(net.minecraft.world.entity.Entity sender, String messageKey, File file)
     {
-        net.minecraft.text.Text name = (new net.minecraft.text.LiteralText(file.getName()))
-            .formatted(net.minecraft.util.Formatting.UNDERLINE)
-            .styled((style) -> {
-                return style.withClickEvent(new net.minecraft.text.ClickEvent(net.minecraft.text.ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
+        net.minecraft.network.chat.Component name = (new net.minecraft.network.chat.TextComponent(file.getName()))
+            .withStyle(net.minecraft.ChatFormatting.UNDERLINE)
+            .withStyle((style) -> {
+                return style.withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
             });
 
-        sender.sendSystemMessage(new net.minecraft.text.TranslatableText(messageKey, name), sender.getUuid());
+        sender.sendMessage(new net.minecraft.network.chat.TranslatableComponent(messageKey, name), sender.getUUID());
     }
 
     /**
@@ -271,17 +271,17 @@ public class StringUtils
     @Nullable
     public static String getWorldOrServerName()
     {
-        net.minecraft.client.MinecraftClient mc = net.minecraft.client.MinecraftClient.getInstance();
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
 
-        if (mc.isIntegratedServerRunning())
+        if (mc.hasSingleplayerServer())
         {
-            net.minecraft.server.integrated.IntegratedServer server = mc.getServer();
+            net.minecraft.client.server.IntegratedServer server = mc.getSingleplayerServer();
 
             if (server != null)
             {
                 // This used to be just MinecraftServer::getLevelName().
                 // Getting the name would now require an @Accessor for MinecraftServer.field_23784
-                String name = server.getSaveProperties().getLevelName();
+                String name = server.getWorldData().getLevelName();
                 return FileUtils.generateSimpleSafeFileName(name); 
             }
         }
@@ -295,21 +295,21 @@ public class StringUtils
                 }
                 else
                 {
-                    net.minecraft.client.network.ClientPlayNetworkHandler handler = mc.getNetworkHandler();
-                    net.minecraft.network.ClientConnection connection = handler != null ? handler.getConnection() : null;
+                    net.minecraft.client.multiplayer.ClientPacketListener handler = mc.getConnection();
+                    net.minecraft.network.Connection connection = handler != null ? handler.getConnection() : null;
 
                     if (connection != null)
                     {
-                        return "realms_" + stringifyAddress(connection.getAddress());
+                        return "realms_" + stringifyAddress(connection.getRemoteAddress());
                     }
                 }
             }
 
-            net.minecraft.client.network.ServerInfo server = mc.getCurrentServerEntry();
+            net.minecraft.client.multiplayer.ServerData server = mc.getCurrentServer();
 
             if (server != null)
             {
-                return server.address.replace(':', '_');
+                return server.ip.replace(':', '_');
             }
         }
 
@@ -336,7 +336,7 @@ public class StringUtils
                 return prefix + name + suffix;
             }
 
-            net.minecraft.world.World world = net.minecraft.client.MinecraftClient.getInstance().world;
+            net.minecraft.world.level.Level world = net.minecraft.client.Minecraft.getInstance().level;
 
             if (world != null)
             {
@@ -369,7 +369,7 @@ public class StringUtils
      */
     public static String translate(String translationKey, Object... args)
     {
-        return net.minecraft.client.resource.language.I18n.translate(translationKey, args);
+        return net.minecraft.client.resources.language.I18n.get(translationKey, args);
     }
 
     /**
@@ -378,16 +378,16 @@ public class StringUtils
      */
     public static int getFontHeight()
     {
-        return net.minecraft.client.MinecraftClient.getInstance().textRenderer.fontHeight;
+        return net.minecraft.client.Minecraft.getInstance().font.lineHeight;
     }
 
     public static int getStringWidth(String text)
     {
-        return net.minecraft.client.MinecraftClient.getInstance().textRenderer.getWidth(text);
+        return net.minecraft.client.Minecraft.getInstance().font.width(text);
     }
 
-    public static void drawString(int x, int y, int color, String text, net.minecraft.client.util.math.MatrixStack matrixStack)
+    public static void drawString(int x, int y, int color, String text, com.mojang.blaze3d.vertex.PoseStack matrixStack)
     {
-        net.minecraft.client.MinecraftClient.getInstance().textRenderer.draw(matrixStack, text, x, y, color);
+        net.minecraft.client.Minecraft.getInstance().font.draw(matrixStack, text, x, y, color);
     }
 }

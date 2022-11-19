@@ -2,10 +2,10 @@ package fi.dy.masa.malilib.config.options;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import net.minecraft.util.math.MathHelper;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.IConfigDouble;
+import net.minecraft.util.Mth;
 
 public class ConfigDouble extends ConfigBase<ConfigDouble> implements IConfigDouble
 {
@@ -86,7 +86,7 @@ public class ConfigDouble extends ConfigBase<ConfigDouble> implements IConfigDou
 
     protected double getClampedValue(double value)
     {
-        return MathHelper.clamp(value, this.minValue, this.maxValue);
+        return Mth.clamp(value, this.minValue, this.maxValue);
     }
 
     @Override

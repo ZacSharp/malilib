@@ -1,8 +1,8 @@
 package fi.dy.masa.malilib.util;
 
 import java.util.Comparator;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 
 public class SubChunkPos extends Vec3i
 {
@@ -32,8 +32,8 @@ public class SubChunkPos extends Vec3i
             int y = this.referencePosition.getY();
             int z = this.referencePosition.getZ();
 
-            double dist1 = pos1.getSquaredDistance(x, y, z, false);
-            double dist2 = pos2.getSquaredDistance(x, y, z, false);
+            double dist1 = pos1.distSqr(x, y, z, false);
+            double dist2 = pos2.distSqr(x, y, z, false);
 
             return dist1 < dist2 ? -1 : (dist1 > dist2 ? 1 : 0);
         }

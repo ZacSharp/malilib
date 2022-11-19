@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
+import net.minecraft.client.gui.screens.Screen;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.gui.screen.Screen;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.gui.ButtonPressDirtyListenerSimple;
@@ -110,7 +110,7 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
     protected WidgetListConfigOptions createListWidget(int listX, int listY)
     {
         return new WidgetListConfigOptions(listX, listY,
-                this.getBrowserWidth(), this.getBrowserHeight(), this.getConfigWidth(), this.getZOffset(), this.useKeybindSearch(), this);
+                this.getBrowserWidth(), this.getBrowserHeight(), this.getConfigWidth(), this.getBlitOffset(), this.useKeybindSearch(), this);
     }
 
     @Override
@@ -118,7 +118,7 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
     {
         super.initGui();
 
-        this.client.keyboard.setRepeatEvents(true);
+        this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
     }
 
     @Override
@@ -131,7 +131,7 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
             this.getListWidget().clearConfigsModifiedFlag();
         }
 
-        this.client.keyboard.setRepeatEvents(false);
+        this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
     }
 
     protected void onSettingsChanged()

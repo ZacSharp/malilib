@@ -1,18 +1,18 @@
 package fi.dy.masa.malilib.util;
 
 import javax.annotation.Nullable;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.server.IntegratedServer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 public class WorldUtils
 {
-    public static String getDimensionId(World world)
+    public static String getDimensionId(Level world)
     {
-        Identifier id = world.getRegistryKey().getValue();
+        ResourceLocation id = world.dimension().location();
         return id != null ? id.getNamespace() + "_" + id.getPath() : "__fallback";
     }
 
@@ -23,17 +23,17 @@ public class WorldUtils
      * @return
      */
     @Nullable
-    public static World getBestWorld(MinecraftClient mc)
+    public static Level getBestWorld(Minecraft mc)
     {
-        IntegratedServer server = mc.getServer();
+        IntegratedServer server = mc.getSingleplayerServer();
 
-        if (mc.world != null && server != null)
+        if (mc.level != null && server != null)
         {
-            return server.getWorld(mc.world.getRegistryKey());
+            return server.getLevel(mc.level.dimension());
         }
         else
         {
-            return mc.world;
+            return mc.level;
         }
     }
 
@@ -46,14 +46,14 @@ public class WorldUtils
      * @return
      */
     @Nullable
-    public static WorldChunk getBestChunk(int chunkX, int chunkZ, MinecraftClient mc)
+    public static LevelChunk getBestChunk(int chunkX, int chunkZ, Minecraft mc)
     {
-        IntegratedServer server = mc.getServer();
-        WorldChunk chunk = null;
+        IntegratedServer server = mc.getSingleplayerServer();
+        LevelChunk chunk = null;
 
-        if (mc.world != null && server != null)
+        if (mc.level != null && server != null)
         {
-            ServerWorld world = server.getWorld(mc.world.getRegistryKey());
+            ServerLevel world = server.getLevel(mc.level.dimension());
 
             if (world != null)
             {
@@ -66,6 +66,6 @@ public class WorldUtils
             return chunk;
         }
 
-        return mc.world != null ? mc.world.getChunk(chunkX, chunkZ) : null;
+        return mc.level != null ? mc.level.getChunk(chunkX, chunkZ) : null;
     }
 }

@@ -7,51 +7,51 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix4f;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
 import fi.dy.masa.malilib.event.RenderEventHandler;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 
-@Mixin(WorldRenderer.class)
+@Mixin(LevelRenderer.class)
 public abstract class MixinWorldRenderer
 {
-    @Shadow @Final private MinecraftClient client;
+    @Shadow @Final private Minecraft minecraft;
 
-    @Inject(method = "render",
+    @Inject(method = "renderLevel",
             at = @At(value = "INVOKE", ordinal = 1,
-                     target = "Lnet/minecraft/client/render/WorldRenderer;renderWeather(Lnet/minecraft/client/render/LightmapTextureManager;FDDD)V"))
+                     target = "Lnet/minecraft/client/renderer/LevelRenderer;renderWeather(Lnet/minecraft/client/renderer/LightTexture;FDDD)V"))
     private void onRenderWorldLastNormal(
-            MatrixStack matrices,
+            PoseStack matrices,
             float tickDelta, long limitTime, boolean renderBlockOutline,
             Camera camera,
             GameRenderer gameRenderer,
-            LightmapTextureManager lightmapTextureManager,
+            LightTexture lightmapTextureManager,
             Matrix4f projMatrix,
             CallbackInfo ci)
     {
-        ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderWorldLast(matrices, projMatrix, this.client);
+        ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderWorldLast(matrices, projMatrix, this.minecraft);
     }
 
-    @Inject(method = "render",
+    @Inject(method = "renderLevel",
             slice = @Slice(from = @At(value = "FIELD", ordinal = 1, // start from the endDrawing() call
-                                      target = "Lnet/minecraft/client/render/RenderPhase;WEATHER_TARGET:Lnet/minecraft/client/render/RenderPhase$Target;"),
+                                      target = "Lnet/minecraft/client/renderer/RenderStateShard;WEATHER_TARGET:Lnet/minecraft/client/renderer/RenderStateShard$OutputStateShard;"),
                             to = @At(value = "INVOKE", ordinal = 1, // end at the second renderWeather call
-                                     target = "Lnet/minecraft/client/render/WorldRenderer;renderWeather(Lnet/minecraft/client/render/LightmapTextureManager;FDDD)V")),
+                                     target = "Lnet/minecraft/client/renderer/LevelRenderer;renderWeather(Lnet/minecraft/client/renderer/LightTexture;FDDD)V")),
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/gl/ShaderEffect;render(F)V"))
+                    target = "Lnet/minecraft/client/renderer/PostChain;process(F)V"))
     private void onRenderWorldLastFabulous(
-            MatrixStack matrices,
+            PoseStack matrices,
             float tickDelta, long limitTime, boolean renderBlockOutline,
             Camera camera,
             GameRenderer gameRenderer,
-            LightmapTextureManager lightmapTextureManager,
+            LightTexture lightmapTextureManager,
             Matrix4f projMatrix,
             CallbackInfo ci)
     {
-        ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderWorldLast(matrices, projMatrix, this.client);
+        ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderWorldLast(matrices, projMatrix, this.minecraft);
     }
 }

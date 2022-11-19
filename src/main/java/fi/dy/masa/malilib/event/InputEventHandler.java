@@ -3,9 +3,9 @@ package fi.dy.masa.malilib.event;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.client.MinecraftClient;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.Message;
@@ -24,7 +24,7 @@ public class InputEventHandler implements IKeybindManager, IInputManager
 {
     private static final InputEventHandler INSTANCE = new InputEventHandler();
 
-    private final MinecraftClient mc;
+    private final Minecraft mc;
     private final Multimap<Integer, IKeybind> hotkeyMap = ArrayListMultimap.create();
     private final List<KeybindCategory> allKeybinds = new ArrayList<>();
     private final List<IKeybindProvider> keybindProviders = new ArrayList<>();
@@ -34,7 +34,7 @@ public class InputEventHandler implements IKeybindManager, IInputManager
 
     private InputEventHandler()
     {
-        this.mc = MinecraftClient.getInstance();
+        this.mc = Minecraft.getInstance();
     }
 
     public static IKeybindManager getKeybindManager()
@@ -209,7 +209,7 @@ public class InputEventHandler implements IKeybindManager, IInputManager
         if (MaLiLibConfigs.Debug.MOUSE_SCROLL_DEBUG.getBooleanValue())
         {
             int time = (int) (System.currentTimeMillis() & 0xFFFF);
-            int tick = this.mc.world != null ? (int) (this.mc.world.getTime() & 0xFFFF) : 0;
+            int tick = this.mc.level != null ? (int) (this.mc.level.getGameTime() & 0xFFFF) : 0;
             String timeStr = String.format("time: %04X, tick: %04X", time, tick);
             MaLiLib.logger.info("{} - xOffset: {}, yOffset: {}, discrete: {}, sensitivity: {}, amount: {}",
                                 timeStr, xOffset, yOffset, discrete, sensitivity, amount);

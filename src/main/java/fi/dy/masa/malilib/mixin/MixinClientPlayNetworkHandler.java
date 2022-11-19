@@ -1,57 +1,57 @@
 package fi.dy.masa.malilib.mixin;
 
 import javax.annotation.Nullable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.game.ClientboundLoginPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
-import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import fi.dy.masa.malilib.event.WorldLoadHandler;
 import fi.dy.masa.malilib.network.ClientPacketChannelHandler;
 
-@Mixin(ClientPlayNetworkHandler.class)
+@Mixin(ClientPacketListener.class)
 public abstract class MixinClientPlayNetworkHandler
 {
-    @Shadow private MinecraftClient client;
-    @Shadow private ClientWorld world;
+    @Shadow private Minecraft minecraft;
+    @Shadow private ClientLevel level;
 
-    @Nullable private ClientWorld worldBefore;
+    @Nullable private ClientLevel worldBefore;
 
-    @Inject(method = "onGameJoin", at = @At("HEAD"))
-    private void onPreJoinGameHead(GameJoinS2CPacket packet, CallbackInfo ci)
+    @Inject(method = "handleLogin", at = @At("HEAD"))
+    private void onPreJoinGameHead(ClientboundLoginPacket packet, CallbackInfo ci)
     {
         // Need to grab the old world reference at the start of the method,
         // because the next injection point is right after the world has been assigned,
         // since we need the new world reference for the callback.
-        this.worldBefore = this.world;
+        this.worldBefore = this.level;
     }
 
-    @Inject(method = "onGameJoin", at = @At(value = "INVOKE",
-                target = "Lnet/minecraft/client/MinecraftClient;joinWorld(" +
-                         "Lnet/minecraft/client/world/ClientWorld;)V"))
-    private void onPreGameJoin(GameJoinS2CPacket packet, CallbackInfo ci)
+    @Inject(method = "handleLogin", at = @At(value = "INVOKE",
+                target = "Lnet/minecraft/client/MinecraftClient;setLevel(" +
+                         "Lnet/minecraft/client/multiplayer/ClientLevel;)V"))
+    private void onPreGameJoin(ClientboundLoginPacket packet, CallbackInfo ci)
     {
-        ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPre(this.worldBefore, this.world, this.client);
+        ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPre(this.worldBefore, this.level, this.minecraft);
     }
 
-    @Inject(method = "onGameJoin", at = @At("RETURN"))
-    private void onPostGameJoin(GameJoinS2CPacket packet, CallbackInfo ci)
+    @Inject(method = "handleLogin", at = @At("RETURN"))
+    private void onPostGameJoin(ClientboundLoginPacket packet, CallbackInfo ci)
     {
-        ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPost(this.worldBefore, this.world, this.client);
+        ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPost(this.worldBefore, this.level, this.minecraft);
         this.worldBefore = null;
     }
 
-    @Inject(method = "onCustomPayload", cancellable = true,
+    @Inject(method = "handleCustomPayload", cancellable = true,
                 at = @At(value = "INVOKE",
-                         target = "Lnet/minecraft/network/packet/s2c/play/CustomPayloadS2CPacket;getChannel()Lnet/minecraft/util/Identifier;"))
-    private void onCustomPayload(CustomPayloadS2CPacket packet, CallbackInfo ci)
+                         target = "Lnet/minecraft/network/protocol/game/ClientboundCustomPayloadPacket;getIdentifier()Lnet/minecraft/resources/ResourceLocation;"))
+    private void onCustomPayload(ClientboundCustomPayloadPacket packet, CallbackInfo ci)
     {
-        if (((ClientPacketChannelHandler) ClientPacketChannelHandler.getInstance()).processPacketFromServer(packet, (ClientPlayNetworkHandler)(Object) this))
+        if (((ClientPacketChannelHandler) ClientPacketChannelHandler.getInstance()).processPacketFromServer(packet, (ClientPacketListener)(Object) this))
         {
             ci.cancel();
         }

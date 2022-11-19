@@ -3,8 +3,8 @@ package fi.dy.masa.malilib.gui;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
@@ -27,7 +27,7 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
         this.title = StringUtils.translate(titleKey);
         this.listener = listener;
         this.useTitleHierarchy = false;
-        this.setZOffset(1);
+        this.setBlitOffset(1);
 
         StringUtils.splitTextToLines(this.messageLines, StringUtils.translate(messageKey, args), width - 30);
 
@@ -47,7 +47,7 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
 
         this.createButton(x, y, buttonWidth, ButtonType.CANCEL);
 
-        this.mc.keyboard.setRepeatEvents(true);
+        this.mc.keyboardHandler.setSendRepeatsToGui(true);
     }
 
     public void setTextColor(int textColor)
@@ -85,15 +85,15 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
     }
 
     @Override
-    public void drawContents(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void drawContents(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         if (this.getParent() != null)
         {
             this.getParent().render(matrixStack, mouseX, mouseY, partialTicks);
         }
 
-        matrixStack.push();
-        matrixStack.translate(0, 0, this.getZOffset());
+        matrixStack.pushPose();
+        matrixStack.translate(0, 0, this.getBlitOffset());
 
         RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xF0000000, COLOR_HORIZONTAL_BAR);
 
@@ -108,7 +108,7 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
         }
 
         this.drawButtons(mouseX, mouseY, partialTicks, matrixStack);
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     protected ButtonListener createActionListener(ButtonType type)

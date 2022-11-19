@@ -1,12 +1,12 @@
 package fi.dy.masa.malilib.network;
 
 import java.util.List;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 
 public interface IPluginChannelHandler
 {
-    List<Identifier> getChannels();
+    List<ResourceLocation> getChannels();
 
-    void onPacketReceived(PacketByteBuf buf);
+    void onPacketReceived(FriendlyByteBuf buf);
 }

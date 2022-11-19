@@ -10,14 +10,14 @@ import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import fi.dy.masa.malilib.MaLiLib;
 
 public class JsonUtils
@@ -328,7 +328,7 @@ public class JsonUtils
         return vec3dFromJson(obj, name) != null;
     }
 
-    public static JsonArray vec3dToJson(Vec3d vec)
+    public static JsonArray vec3dToJson(Vec3 vec)
     {
         JsonArray arr = new JsonArray();
 
@@ -340,7 +340,7 @@ public class JsonUtils
     }
 
     @Nullable
-    public static Vec3d vec3dFromJson(JsonObject obj, String name)
+    public static Vec3 vec3dFromJson(JsonObject obj, String name)
     {
         if (hasArray(obj, name))
         {
@@ -350,7 +350,7 @@ public class JsonUtils
             {
                 try
                 {
-                    return new Vec3d(arr.get(0).getAsDouble(), arr.get(1).getAsDouble(), arr.get(2).getAsDouble());
+                    return new Vec3(arr.get(0).getAsDouble(), arr.get(1).getAsDouble(), arr.get(2).getAsDouble());
                 }
                 catch (Exception e)
                 {
