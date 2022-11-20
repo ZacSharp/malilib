@@ -29,10 +29,10 @@ class ForgeRenderEventHandler
         net.minecraft.client.Camera cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera();
         float yaw = cam.getYRot();
         float pitch = cam.getXRot();
-        org.lwjgl.opengl.GL11.glPushMatrix();
-        org.lwjgl.opengl.GL11.glRotatef(pitch, 1, 0, 0);
-        org.lwjgl.opengl.GL11.glRotatef(yaw+180, 0, 1, 0);
+        event.getMatrixStack().pushPose();
+//        event.getMatrixStack().glRotatef(pitch, 1, 0, 0);
+//        event.getMatrixStack().glRotatef(yaw+180, 0, 1, 0);
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderWorldLast(event.getMatrixStack(), event.getProjectionMatrix(), net.minecraft.client.Minecraft.getInstance());
-        org.lwjgl.opengl.GL11.glPopMatrix();
+        event.getMatrixStack().popPose();
     }
 }
