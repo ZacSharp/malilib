@@ -2,6 +2,7 @@ package fi.dy.masa.malilib.gui;
 
 import java.util.List;
 import javax.annotation.Nullable;
+import net.minecraft.client.gui.screens.Screen;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.config.options.ConfigBase;
@@ -17,7 +18,6 @@ import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.client.gui.screens.Screen;
 
 public class GuiKeybindSettings extends GuiDialogBase
 {

@@ -1,9 +1,9 @@
 package fi.dy.masa.malilib.util;
 
-import net.minecraft.world.entity.Entity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.AxisDirection;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 public class PositionUtils
@@ -96,11 +96,11 @@ public class PositionUtils
      */
     public static Direction getClosestLookingDirection(Entity entity, float verticalThreshold)
     {
-        if (entity.xRot >= verticalThreshold)
+        if (entity.getXRot() >= verticalThreshold)
         {
             return Direction.DOWN;
         }
-        else if (entity.xRot <= -verticalThreshold)
+        else if (entity.getYRot() <= -verticalThreshold)
         {
             return Direction.UP;
         }
@@ -134,11 +134,11 @@ public class PositionUtils
         double w = entity.getBbWidth();
         BlockPos pos = new BlockPos(x, y, z);
 
-        if (entity.xRot >= verticalThreshold)
+        if (entity.getXRot() >= verticalThreshold)
         {
             return pos.below(1);
         }
-        else if (entity.xRot <= -verticalThreshold)
+        else if (entity.getXRot() <= -verticalThreshold)
         {
             return new BlockPos(x, Math.ceil(entity.getBoundingBox().maxY), z);
         }

@@ -6,12 +6,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import javax.annotation.Nullable;
-import org.lwjgl.glfw.GLFW;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.glfw.GLFW;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
+import fi.dy.masa.malilib.gui.Message;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings.Context;
 import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.malilib.util.IF3KeyStateSetter;
@@ -183,6 +184,13 @@ public class KeybindMulti implements IKeybind
             {
                 cancel = this.callback.onKeyAction(KeyAction.PRESS, this);
             }
+        }
+
+        if (cancel && MaLiLibConfigs.Debug.INPUT_CANCELLATION_DEBUG.getBooleanValue())
+        {
+            String msg = String.format("Cancel requested by callback '%s'", this.callback.getClass().getName());
+            InfoUtils.showInGameMessage(Message.MessageType.INFO, msg);
+            MaLiLib.logger.info(msg);
         }
 
         return cancel;
@@ -530,5 +538,9 @@ public class KeybindMulti implements IKeybind
     public static int getTriggeredCount()
     {
         return triggeredCount;
+    }
+
+    public IHotkeyCallback getCallback() {
+        return callback;
     }
 }

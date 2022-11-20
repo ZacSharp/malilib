@@ -4,7 +4,6 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
-
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 
 public class GuiModConfigs extends GuiConfigsBase

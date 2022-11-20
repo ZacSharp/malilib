@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.ChatFormatting;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
@@ -62,8 +62,8 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     protected static final int LEFT         = 20;
     protected static final int TOP          = 10;
     public final Minecraft mc = Minecraft.getInstance();
-    public final Font textRenderer = this.mc.font;
-    public final int fontHeight = this.textRenderer.lineHeight;
+    public final Font font = this.mc.font;
+    public final int fontHeight = this.font.lineHeight;
     private final List<ButtonBase> buttons = new ArrayList<>();
     private final List<WidgetBase> widgets = new ArrayList<>();
     private final List<TextFieldWrapper<? extends GuiTextFieldGeneric>> textFields = new ArrayList<>();
@@ -72,6 +72,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     protected String title = "";
     protected boolean useTitleHierarchy = true;
     private int keyInputCount;
+    private double mouseWheelDeltaSum;
     @Nullable
     private Screen parent;
 
@@ -125,6 +126,17 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     }
 
     @Override
+    public void resize(Minecraft mc, int width, int height)
+    {
+        if (this.getParent() != null)
+        {
+            this.getParent().resize(mc, width, height);
+        }
+
+        super.resize(mc, width, height);
+    }
+
+    @Override
     public void init()
     {
         super.init();
@@ -170,12 +182,25 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount)
     {
-        if (amount == 0 || this.onMouseScrolled((int) mouseX, (int) mouseY, amount))
+        if (this.mouseWheelDeltaSum != 0.0 && Math.signum(amount) != Math.signum(this.mouseWheelDeltaSum))
         {
-            return super.mouseScrolled(mouseX, mouseY, amount);
+            this.mouseWheelDeltaSum = 0.0;
         }
 
-        return false;
+        this.mouseWheelDeltaSum += amount;
+        amount = (int) this.mouseWheelDeltaSum;
+
+        if (amount != 0.0)
+        {
+            this.mouseWheelDeltaSum -= amount;
+
+            if (this.onMouseScrolled((int) mouseX, (int) mouseY, amount))
+            {
+                return true;
+            }
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, amount);
     }
 
     @Override
@@ -588,17 +613,17 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
 
     public int getStringWidth(String text)
     {
-        return this.textRenderer.width(text);
+        return this.font.width(text);
     }
 
     public void drawString(PoseStack matrixStack, String text, int x, int y, int color)
     {
-        this.textRenderer.draw(matrixStack, text, x, y, color);
+        this.font.draw(matrixStack, text, x, y, color);
     }
 
     public void drawStringWithShadow(PoseStack matrixStack, String text, int x, int y, int color)
     {
-        this.textRenderer.drawShadow(matrixStack, text, x, y, color);
+        this.font.drawShadow(matrixStack, text, x, y, color);
     }
 
     public int getMaxPrettyNameLength(List<? extends IConfigBase> configs)

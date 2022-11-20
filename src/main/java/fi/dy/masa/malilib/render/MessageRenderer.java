@@ -48,7 +48,7 @@ public class MessageRenderer
     /**
      * Sets whether the rendered box should get centered to the given x and y coordinates, or expand
      * to a given direction from that point.
-     * If centeredV is false, then the value set in {@link setExpandUp()} determines whether the box expands up or down.
+     * If centeredV is false, then the value set in {@link #setExpandUp(boolean)} determines whether the box expands up or down.
      * @param centeredH
      * @param centeredV
      */

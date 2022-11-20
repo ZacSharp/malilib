@@ -1,6 +1,5 @@
 package fi.dy.masa.malilib.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -90,12 +89,12 @@ public class GuiTextFieldGeneric extends EditBox
     {
         if (this.getBlitOffset() != 0)
         {
-            RenderSystem.pushMatrix();
-            RenderSystem.translatef(0, 0, this.getBlitOffset());
+            matrixStack.pushPose();
+            matrixStack.translate(0, 0, this.getBlitOffset());
 
             super.render(matrixStack, mouseX, mouseY, partialTicks);
 
-            RenderSystem.popMatrix();
+            matrixStack.popPose();
         }
         else
         {

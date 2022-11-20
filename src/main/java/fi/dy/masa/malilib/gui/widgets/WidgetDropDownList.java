@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import fi.dy.masa.malilib.gui.GuiScrollBar;
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
@@ -17,9 +16,8 @@ import fi.dy.masa.malilib.util.GuiUtils;
 
 /**
  * A dropdown selection widget for entries in the given list.
- * If the entries extend {@link fi.dy.masa.malilib.interfaces.IStringValue},
- * then the {@link fi.dy.masa.malilib.interfaces.IStringValue#getStringValue()}
- * method is used for the display string, otherwise {@link Object#toString()} is used.
+ * If the entries extend {@link fi.dy.masa.malilib.interfaces.IStringValue}, then the {@link fi.dy.masa.malilib.interfaces.IStringValue#getStringValue()}
+ * method is used for the display string, otherwise {@link #toString()} is used.
  * @author masa
  *
  * @param <T>
@@ -259,8 +257,8 @@ public class WidgetDropDownList<T> extends WidgetBase
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
 
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(0, 0, 1);
+        matrixStack.pushPose();
+        matrixStack.translate(0, 0, 1);
         List<T> list = this.filteredEntries;
         int visibleEntries = Math.min(this.maxVisibleEntries, list.size());
 
@@ -317,7 +315,7 @@ public class WidgetDropDownList<T> extends WidgetBase
             RenderUtils.drawTexturedRect(this.x + this.width - 16, this.y + 2, i.getU() + i.getWidth(), i.getV(), i.getWidth(), i.getHeight());
         }
 
-        RenderSystem.popMatrix();
+        matrixStack.popPose();
     }
 
     protected static class TextFieldListener implements ITextFieldListener<GuiTextFieldGeneric>

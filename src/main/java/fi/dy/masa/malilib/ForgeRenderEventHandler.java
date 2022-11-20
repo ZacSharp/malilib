@@ -13,7 +13,7 @@ class ForgeRenderEventHandler
     {
         if (event.getType() == RenderGameOverlayEvent.ElementType.ALL)
         {
-            ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayPost(net.minecraft.client.Minecraft.getInstance(), event.getPartialTicks(), event.getMatrixStack());
+            ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayPost(event.getMatrixStack(), net.minecraft.client.Minecraft.getInstance(), event.getPartialTicks());
         }
     }
 
@@ -32,7 +32,7 @@ class ForgeRenderEventHandler
         org.lwjgl.opengl.GL11.glPushMatrix();
         org.lwjgl.opengl.GL11.glRotatef(pitch, 1, 0, 0);
         org.lwjgl.opengl.GL11.glRotatef(yaw+180, 0, 1, 0);
-        ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderWorldLast(event.getMatrixStack(), net.minecraft.client.Minecraft.getInstance(), event.getPartialTicks());
+        ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderWorldLast(event.getMatrixStack(), event.getProjectionMatrix(), net.minecraft.client.Minecraft.getInstance());
         org.lwjgl.opengl.GL11.glPopMatrix();
     }
 }

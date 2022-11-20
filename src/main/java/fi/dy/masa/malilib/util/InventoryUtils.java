@@ -1,28 +1,28 @@
 package fi.dy.masa.malilib.util;
 
 import javax.annotation.Nullable;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.level.block.state.properties.ChestType;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 public class InventoryUtils
@@ -37,7 +37,7 @@ public class InventoryUtils
      */
     public static boolean areStacksEqual(ItemStack stack1, ItemStack stack2)
     {
-        return ItemStack.isSame(stack1, stack2) && ItemStack.tagMatches(stack1, stack2);
+        return ItemStack.isSameIgnoreDurability(stack1, stack2) && ItemStack.tagMatches(stack1, stack2);
     }
 
     /**
@@ -49,7 +49,7 @@ public class InventoryUtils
      */
     public static boolean areStacksEqualIgnoreDurability(ItemStack stack1, ItemStack stack2)
     {
-        return ItemStack.isSameIgnoreDurability(stack1, stack2) && ItemStack.tagMatches(stack1, stack2);
+        return ItemStack.isSame(stack1, stack2) && ItemStack.tagMatches(stack1, stack2);
     }
 
     /**
@@ -146,7 +146,7 @@ public class InventoryUtils
     public static boolean swapItemToMainHand(ItemStack stackReference, Minecraft mc)
     {
         Player player = mc.player;
-        boolean isCreative = player.abilities.instabuild;
+        boolean isCreative = player.isCreative();
 
         // Already holding the requested item
         if (areStacksEqual(stackReference, player.getMainHandItem()))
@@ -156,8 +156,8 @@ public class InventoryUtils
 
         if (isCreative)
         {
-            player.inventory.setPickedItem(stackReference);
-            mc.gameMode.handleCreativeModeItemAdd(player.getMainHandItem(), 36 + player.inventory.selected);
+            player.getInventory().setPickedItem(stackReference);
+            mc.gameMode.handleCreativeModeItemAdd(player.getMainHandItem(), 36 + player.getInventory().selected); // sendSlotPacket
             return true;
         }
         else
@@ -166,7 +166,7 @@ public class InventoryUtils
 
             if (slot != -1)
             {
-                int currentHotbarSlot = player.inventory.selected;
+                int currentHotbarSlot = player.getInventory().selected;
                 mc.gameMode.handleInventoryMouseClick(player.inventoryMenu.containerId, slot, currentHotbarSlot, ClickType.SWAP, mc.player);
                 return true;
             }
@@ -186,17 +186,19 @@ public class InventoryUtils
     @Nullable
     public static Container getInventory(Level world, BlockPos pos)
     {
-        if (world.hasChunkAt(pos) == false)
+        @SuppressWarnings("deprecation")
+        boolean isLoaded = world.hasChunkAt(pos);
+
+        if (isLoaded == false)
         {
             return null;
         }
 
         // The method in World now checks that the caller is from the same thread...
-        BlockEntity te = world.getChunk(pos).getBlockEntity(pos);
+        BlockEntity te = world.getChunkAt(pos).getBlockEntity(pos);
 
-        if (te instanceof Container)
+        if (te instanceof Container inv)
         {
-            Container inv = (Container) te;
             BlockState state = world.getBlockState(pos);
 
             if (state.getBlock() instanceof ChestBlock && te instanceof ChestBlockEntity)
@@ -206,19 +208,21 @@ public class InventoryUtils
                 if (type != ChestType.SINGLE)
                 {
                     BlockPos posAdj = pos.relative(ChestBlock.getConnectedDirection(state));
+                    @SuppressWarnings("deprecation")
+                    boolean isLoadedAdj = world.hasChunkAt(posAdj);
 
-                    if (world.hasChunkAt(posAdj))
+                    if (isLoadedAdj)
                     {
                         BlockState stateAdj = world.getBlockState(posAdj);
                         // The method in World now checks that the caller is from the same thread...
-                        BlockEntity te2 = world.getChunk(posAdj).getBlockEntity(posAdj);
+                        BlockEntity te2 = world.getChunkAt(posAdj).getBlockEntity(posAdj);
 
                         if (stateAdj.getBlock() == state.getBlock() &&
                             te2 instanceof ChestBlockEntity &&
                             stateAdj.getValue(ChestBlock.TYPE) != ChestType.SINGLE &&
                             stateAdj.getValue(ChestBlock.FACING) == state.getValue(ChestBlock.FACING))
                         {
-                            Container invRight = type == ChestType.RIGHT ?              inv : (Container) te2;
+                            Container invRight = type == ChestType.RIGHT ?             inv : (Container) te2;
                             Container invLeft  = type == ChestType.RIGHT ? (Container) te2 :             inv;
                             inv = new CompoundContainer(invRight, invLeft);
                         }
@@ -364,10 +368,8 @@ public class InventoryUtils
         Object2IntOpenHashMap<ItemType> map = new Object2IntOpenHashMap<>();
         NonNullList<ItemStack> items = getStoredItems(stackShulkerBox);
 
-        for (int slot = 0; slot < items.size(); ++slot)
+        for (ItemStack stack : items)
         {
-            ItemStack stack = items.get(slot);
-
             if (stack.isEmpty() == false)
             {
                 map.addTo(new ItemType(stack), stack.getCount());

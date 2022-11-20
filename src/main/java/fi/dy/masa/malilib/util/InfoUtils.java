@@ -1,9 +1,5 @@
 package fi.dy.masa.malilib.util;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.TranslatableComponent;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.interfaces.IMessageConsumer;
@@ -139,11 +135,11 @@ public class InfoUtils
 
     public static void printActionbarMessage(String key, Object... args)
     {
-        Minecraft mc = Minecraft.getInstance();
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
 
         if (mc.player != null)
         {
-            mc.gui.handleChat(ChatType.GAME_INFO, new TranslatableComponent(key, args), mc.player.getUUID());
+            mc.gui.handleChat(net.minecraft.network.chat.ChatType.GAME_INFO, new net.minecraft.network.chat.TranslatableComponent(key, args), mc.player.getUUID());
         }
     }
 
@@ -182,7 +178,7 @@ public class InfoUtils
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public static void renderInGameMessages(PoseStack matrixStack)
+    public static void renderInGameMessages(com.mojang.blaze3d.vertex.PoseStack matrixStack)
     {
         int x = GuiUtils.getScaledWindowWidth() / 2;
         int y = GuiUtils.getScaledWindowHeight() - 76;
@@ -195,11 +191,11 @@ public class InfoUtils
         @Override
         public void setString(String string)
         {
-            Minecraft mc = Minecraft.getInstance();
+            net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
 
             if (mc.player != null)
             {
-                mc.gui.handleChat(ChatType.GAME_INFO, new TranslatableComponent(string), mc.player.getUUID());
+                mc.gui.handleChat(net.minecraft.network.chat.ChatType.GAME_INFO, new net.minecraft.network.chat.TranslatableComponent(string), mc.player.getUUID());
             }
         }
     }

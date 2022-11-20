@@ -4,14 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
-import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.lang3.tuple.Pair;
 import io.netty.buffer.Unpooled;
 
 /**
@@ -84,13 +85,13 @@ public class PacketSplitter
     */
 
     @Nullable
-    public static FriendlyByteBuf receive(ClientPacketListener networkHandler, ClientboundCustomPayloadPacket message)
+    public static FriendlyByteBuf receive(ClientGamePacketListener networkHandler, ClientboundCustomPayloadPacket message)
     {
         return receive(networkHandler, message, DEFAULT_MAX_RECEIVE_SIZE_S2C);
     }
 
     @Nullable
-    private static FriendlyByteBuf receive(ClientPacketListener networkHandler, ClientboundCustomPayloadPacket message, int maxLength)
+    private static FriendlyByteBuf receive(ClientGamePacketListener networkHandler, ClientboundCustomPayloadPacket message, int maxLength)
     {
         Pair<PacketListener, ResourceLocation> key = Pair.of(networkHandler, message.getIdentifier());
 

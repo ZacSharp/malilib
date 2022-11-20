@@ -1,21 +1,18 @@
 package fi.dy.masa.malilib.interfaces;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.function.Supplier;
 
 public interface IRenderer
 {
     /**
      * Called after the vanilla overlays have been rendered
-     * @param partialTicks
      */
-    default void onRenderGameOverlayPost(float partialTicks, PoseStack matrixStack) {}
+    default void onRenderGameOverlayPost(com.mojang.blaze3d.vertex.PoseStack matrixStack) {}
 
     /**
      * Called after vanilla world rendering
-     * @param partialTicks
      */
-    default void onRenderWorldLast(float partialTicks, PoseStack matrixStack) {}
+    default void onRenderWorldLast(com.mojang.blaze3d.vertex.PoseStack matrixStack, com.mojang.math.Matrix4f projMatrix) {}
 
     /**
      * Called after the tooltip text of an item has been rendered
@@ -24,7 +21,6 @@ public interface IRenderer
 
     /**
      * Returns a supplier for the profiler section name that should be used for this renderer
-     * @return
      */
     default Supplier<String> getProfilerSectionSupplier()
     {

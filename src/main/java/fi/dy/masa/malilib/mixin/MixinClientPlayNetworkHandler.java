@@ -1,16 +1,18 @@
 package fi.dy.masa.malilib.mixin;
 
 import javax.annotation.Nullable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.game.ClientboundLoginPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.protocol.game.ClientboundLoginPacket;
 import fi.dy.masa.malilib.event.WorldLoadHandler;
+import fi.dy.masa.malilib.network.ClientPacketChannelHandler;
 
 @Mixin(ClientPacketListener.class)
 public abstract class MixinClientPlayNetworkHandler
@@ -42,5 +44,16 @@ public abstract class MixinClientPlayNetworkHandler
     {
         ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPost(this.worldBefore, this.level, this.minecraft);
         this.worldBefore = null;
+    }
+
+    @Inject(method = "handleCustomPayload", cancellable = true,
+                at = @At(value = "INVOKE",
+                         target = "Lnet/minecraft/network/protocol/game/ClientboundCustomPayloadPacket;getIdentifier()Lnet/minecraft/resources/ResourceLocation;"))
+    private void onCustomPayload(ClientboundCustomPayloadPacket packet, CallbackInfo ci)
+    {
+        if (((ClientPacketChannelHandler) ClientPacketChannelHandler.getInstance()).processPacketFromServer(packet, (ClientPacketListener)(Object) this))
+        {
+            ci.cancel();
+        }
     }
 }

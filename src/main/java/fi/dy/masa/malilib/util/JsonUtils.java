@@ -1,12 +1,17 @@
 package fi.dy.masa.malilib.util;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -14,8 +19,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fi.dy.masa.malilib.MaLiLib;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
 
 public class JsonUtils
 {
@@ -413,13 +416,10 @@ public class JsonUtils
         {
             String fileName = file.getAbsolutePath();
 
-            try
+            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))
             {
                 JsonParser parser = new JsonParser();
-                FileReader reader = new FileReader(file);
-
                 JsonElement element = parser.parse(reader);
-                reader.close();
 
                 return element;
             }
@@ -434,33 +434,28 @@ public class JsonUtils
 
     public static boolean writeJsonToFile(JsonObject root, File file)
     {
-        FileWriter writer = null;
+        File fileTmp = new File(file.getParentFile(), file.getName() + ".tmp");
 
-        try
+        if (fileTmp.exists())
         {
-            writer = new FileWriter(file);
+            fileTmp = new File(file.getParentFile(), UUID.randomUUID() + ".tmp");
+        }
+
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fileTmp), StandardCharsets.UTF_8))
+        {
             writer.write(GSON.toJson(root));
             writer.close();
 
-            return true;
-        }
-        catch (IOException e)
-        {
-            MaLiLib.logger.warn("Failed to write JSON data to file '{}'", file.getAbsolutePath(), e);
-        }
-        finally
-        {
-            try
+            if (file.exists() && file.isFile() && file.delete() == false)
             {
-                if (writer != null)
-                {
-                    writer.close();
-                }
+                MaLiLib.logger.warn("Failed to delete file '{}'", file.getAbsolutePath());
             }
-            catch (Exception e)
-            {
-                MaLiLib.logger.warn("Failed to close JSON file", e);
-            }
+
+            return fileTmp.renameTo(file);
+        }
+        catch (Exception e)
+        {
+            MaLiLib.logger.warn("Failed to write JSON data to file '{}'", fileTmp.getAbsolutePath(), e);
         }
 
         return false;

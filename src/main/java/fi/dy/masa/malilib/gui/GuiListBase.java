@@ -2,11 +2,11 @@ package fi.dy.masa.malilib.gui;
 
 import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.gui.widgets.WidgetListBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
 import fi.dy.masa.malilib.util.KeyCodes;
-import net.minecraft.client.Minecraft;
 
 public abstract class GuiListBase<TYPE, WIDGET extends WidgetListEntryBase<TYPE>, WIDGETLIST extends WidgetListBase<TYPE, WIDGET>> extends GuiBase
 {
@@ -160,13 +160,13 @@ public abstract class GuiListBase<TYPE, WIDGET extends WidgetListEntryBase<TYPE>
     }
 
     @Override
-    public void init(Minecraft mc, int width, int height)
+    public void resize(Minecraft mc, int width, int height)
     {
-        super.init(mc, width, height);
+        super.resize(mc, width, height);
 
         if (this.getListWidget() != null)
         {
-            this.getListWidget().init(mc, width, height);
+            this.getListWidget().resize(mc, width, height);
         }
     }
 

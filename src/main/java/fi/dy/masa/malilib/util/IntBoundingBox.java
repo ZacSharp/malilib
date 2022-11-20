@@ -1,8 +1,9 @@
 package fi.dy.masa.malilib.util;
 
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.core.Vec3i;
 
 public class IntBoundingBox
 {
@@ -43,6 +44,30 @@ public class IntBoundingBox
                this.minY <= box.maxY;
     }
 
+    public int getMinValueForAxis(Direction.Axis axis)
+    {
+        switch (axis)
+        {
+            case X: return this.minX;
+            case Y: return this.minY;
+            case Z: return this.minZ;
+        }
+
+        return 0;
+    }
+
+    public int getMaxValueForAxis(Direction.Axis axis)
+    {
+        switch (axis)
+        {
+            case X: return this.maxX;
+            case Y: return this.maxY;
+            case Z: return this.maxZ;
+        }
+
+        return 0;
+    }
+
     public BoundingBox toVanillaBox()
     {
         return new BoundingBox(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
@@ -55,7 +80,7 @@ public class IntBoundingBox
 
     public static IntBoundingBox fromVanillaBox(BoundingBox box)
     {
-        return createProper(box.x0, box.y0, box.z0, box.x1, box.y1, box.z1);
+        return createProper(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ());
     }
 
     public static IntBoundingBox createProper(int x1, int y1, int z1, int x2, int y2, int z2)

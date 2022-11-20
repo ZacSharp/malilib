@@ -1,9 +1,8 @@
 package fi.dy.masa.malilib.gui;
 
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
@@ -27,7 +26,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
         this.centerOnScreen();
 
         int width = Math.min(maxTextLength * 10, 240);
-        this.textField = new GuiTextFieldGeneric(this.dialogLeft + 12, this.dialogTop + 40, width, 20, this.textRenderer);
+        this.textField = new GuiTextFieldGeneric(this.dialogLeft + 12, this.dialogTop + 40, width, 20, this.font);
         this.textField.setMaxLength(maxTextLength);
         this.textField.setFocused(true);
         this.textField.setValue(this.originalText);
@@ -42,7 +41,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
 
         x += this.createButton(x, y, ButtonType.OK) + 2;
         x += this.createButton(x, y, ButtonType.RESET) + 2;
-        x += this.createButton(x, y, ButtonType.CANCEL) + 2;
+        this.createButton(x, y, ButtonType.CANCEL);
 
         this.mc.keyboardHandler.setSendRepeatsToGui(true);
     }
@@ -68,8 +67,8 @@ public abstract class GuiTextInputBase extends GuiDialogBase
             this.getParent().render(matrixStack, mouseX, mouseY, partialTicks);
         }
 
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(0, 0, this.getBlitOffset());
+        matrixStack.pushPose();
+        matrixStack.translate(0, 0, this.getBlitOffset());
 
         RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xE0000000, COLOR_HORIZONTAL_BAR);
 
@@ -80,7 +79,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
         this.textField.render(matrixStack, mouseX, mouseY, partialTicks);
 
         this.drawButtons(mouseX, mouseY, partialTicks, matrixStack);
-        RenderSystem.popMatrix();
+        matrixStack.popPose();
     }
 
     @Override
@@ -181,7 +180,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
 
         private final String labelKey;
 
-        private ButtonType(String labelKey)
+        ButtonType(String labelKey)
         {
             this.labelKey = labelKey;
         }

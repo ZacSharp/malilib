@@ -276,7 +276,7 @@ public class StringUtils
     {
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
 
-        if (mc.isLocalServer())
+        if (mc.hasSingleplayerServer())
         {
             net.minecraft.client.server.IntegratedServer server = mc.getSingleplayerServer();
 
@@ -284,7 +284,8 @@ public class StringUtils
             {
                 // This used to be just MinecraftServer::getLevelName().
                 // Getting the name would now require an @Accessor for MinecraftServer.field_23784
-                return server.getWorldData().getLevelName(); 
+                String name = server.getWorldData().getLevelName();
+                return FileUtils.generateSimpleSafeFileName(name); 
             }
         }
         else
@@ -388,7 +389,7 @@ public class StringUtils
         return net.minecraft.client.Minecraft.getInstance().font.width(text);
     }
 
-    public static void drawString(int x, int y, int color, String text, PoseStack matrixStack)
+    public static void drawString(int x, int y, int color, String text, com.mojang.blaze3d.vertex.PoseStack matrixStack)
     {
         net.minecraft.client.Minecraft.getInstance().font.draw(matrixStack, text, x, y, color);
     }

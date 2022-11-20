@@ -84,7 +84,7 @@ public class WidgetSearchBar extends WidgetBase
             {
                 if (GuiBase.isShiftDown())
                 {
-                    this.mc.screen.removed();
+                    this.mc.screen.onClose();
                 }
 
                 this.searchOpen = false;
@@ -111,7 +111,6 @@ public class WidgetSearchBar extends WidgetBase
             this.searchOpen = true;
             this.searchBox.setFocused(true);
             this.searchBox.setValue("");
-            this.searchBox.moveCursorToEnd();
             this.searchBox.charTyped(charIn, modifiers);
 
             return true;

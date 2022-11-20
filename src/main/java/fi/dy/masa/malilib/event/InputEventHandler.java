@@ -3,8 +3,12 @@ package fi.dy.masa.malilib.event;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibConfigs;
+import fi.dy.masa.malilib.gui.Message;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.hotkeys.IInputManager;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
@@ -14,28 +18,23 @@ import fi.dy.masa.malilib.hotkeys.IKeyboardInputHandler;
 import fi.dy.masa.malilib.hotkeys.IMouseInputHandler;
 import fi.dy.masa.malilib.hotkeys.KeybindCategory;
 import fi.dy.masa.malilib.hotkeys.KeybindMulti;
-import fi.dy.masa.malilib.util.KeyCodes;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import fi.dy.masa.malilib.util.InfoUtils;
 
 public class InputEventHandler implements IKeybindManager, IInputManager
 {
     private static final InputEventHandler INSTANCE = new InputEventHandler();
 
+    private final Minecraft mc;
     private final Multimap<Integer, IKeybind> hotkeyMap = ArrayListMultimap.create();
     private final List<KeybindCategory> allKeybinds = new ArrayList<>();
-    private final IntOpenHashSet modifierKeys = new IntOpenHashSet();
     private final List<IKeybindProvider> keybindProviders = new ArrayList<>();
     private final List<IKeyboardInputHandler> keyboardHandlers = new ArrayList<>();
     private final List<IMouseInputHandler> mouseHandlers = new ArrayList<>();
+    private double mouseWheelDeltaSum;
 
     private InputEventHandler()
     {
-        this.modifierKeys.add(KeyCodes.KEY_LEFT_SHIFT);
-        this.modifierKeys.add(KeyCodes.KEY_RIGHT_SHIFT);
-        this.modifierKeys.add(KeyCodes.KEY_LEFT_CONTROL);
-        this.modifierKeys.add(KeyCodes.KEY_RIGHT_CONTROL);
-        this.modifierKeys.add(KeyCodes.KEY_LEFT_ALT);
-        this.modifierKeys.add(KeyCodes.KEY_RIGHT_ALT);
+        this.mc = Minecraft.getInstance();
     }
 
     public static IKeybindManager getKeybindManager()
@@ -149,15 +148,13 @@ public class InputEventHandler implements IKeybindManager, IInputManager
             {
                 if (handler.onKeyInput(keyCode, scanCode, modifiers, eventKeyState))
                 {
+                    this.printInputCancellationDebugMessage(handler);
                     return true;
                 }
             }
         }
 
-        // Somewhat hacky fix to prevent eating the modifier keys... >_>
-        // A proper fix would likely require adding a context for the keys,
-        // and only cancel if the context is currently active/valid.
-        return cancel && this.isModifierKey(keyCode) == false;
+        return cancel;
     }
 
     /**
@@ -180,6 +177,7 @@ public class InputEventHandler implements IKeybindManager, IInputManager
                 {
                     if (handler.onMouseClick(mouseX, mouseY, eventButton, eventButtonState))
                     {
+                        this.printInputCancellationDebugMessage(handler);
                         return true;
                     }
                 }
@@ -189,28 +187,60 @@ public class InputEventHandler implements IKeybindManager, IInputManager
         return cancel;
     }
 
+    private void printInputCancellationDebugMessage(Object handler)
+    {
+        if (MaLiLibConfigs.Debug.INPUT_CANCELLATION_DEBUG.getBooleanValue())
+        {
+            String msg = String.format("Cancel requested by input handler '%s'", handler.getClass().getName());
+            InfoUtils.showInGameMessage(Message.MessageType.INFO, msg);
+            MaLiLib.logger.info(msg);
+        }
+    }
+
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public boolean onMouseScroll(final int mouseX, final int mouseY, final double amount)
+    public boolean onMouseScroll(final int mouseX, final int mouseY, final double xOffset, final double yOffset)
     {
-        boolean cancel = false;
+        boolean discrete = this.mc.options.discreteMouseScroll;
+        double sensitivity = this.mc.options.mouseWheelSensitivity;
+        double amount = (discrete ? Math.signum(yOffset) : yOffset) * sensitivity;
 
-        if (amount != 0)
+        if (MaLiLibConfigs.Debug.MOUSE_SCROLL_DEBUG.getBooleanValue())
         {
-            if (this.mouseHandlers.isEmpty() == false)
+            int time = (int) (System.currentTimeMillis() & 0xFFFF);
+            int tick = this.mc.level != null ? (int) (this.mc.level.getGameTime() & 0xFFFF) : 0;
+            String timeStr = String.format("time: %04X, tick: %04X", time, tick);
+            MaLiLib.logger.info("{} - xOffset: {}, yOffset: {}, discrete: {}, sensitivity: {}, amount: {}",
+                                timeStr, xOffset, yOffset, discrete, sensitivity, amount);
+        }
+
+        if (amount != 0 && this.mouseHandlers.isEmpty() == false)
+        {
+            if (this.mouseWheelDeltaSum != 0.0 && Math.signum(amount) != Math.signum(this.mouseWheelDeltaSum))
             {
+                this.mouseWheelDeltaSum = 0.0;
+            }
+
+            this.mouseWheelDeltaSum += amount;
+            amount = (int) this.mouseWheelDeltaSum;
+
+            if (amount != 0.0)
+            {
+                this.mouseWheelDeltaSum -= amount;
+
                 for (IMouseInputHandler handler : this.mouseHandlers)
                 {
                     if (handler.onMouseScroll(mouseX, mouseY, amount))
                     {
+                        this.printInputCancellationDebugMessage(handler);
                         return true;
                     }
                 }
             }
         }
 
-        return cancel;
+        return false;
     }
 
     /**
@@ -225,11 +255,6 @@ public class InputEventHandler implements IKeybindManager, IInputManager
                 handler.onMouseMove(mouseX, mouseY);
             }
         }
-    }
-
-    private boolean isModifierKey(int eventKey)
-    {
-        return this.modifierKeys.contains(eventKey);
     }
 
     private boolean checkKeyBindsForChanges(int eventKey)

@@ -2,11 +2,11 @@ package fi.dy.masa.malilib.util.restrictions;
 
 import java.util.List;
 import java.util.Set;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.ForgeRegistries;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class BlockRestriction extends UsageRestriction<Block>
 {

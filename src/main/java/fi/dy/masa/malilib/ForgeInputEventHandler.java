@@ -35,7 +35,7 @@ class ForgeInputEventHandler
     @SubscribeEvent
     public void onMouseScrollEvent(InputEvent.MouseScrollEvent event)
     {
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), event.getScrollDelta()))
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), event.getScrollDelta(), 0))
         {
             event.setCanceled(true);
         }
@@ -80,7 +80,7 @@ class ForgeInputEventHandler
     @SubscribeEvent
     public void onGuiMouseScrolledPre(GuiScreenEvent.MouseScrollEvent.Pre event)
     {
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), event.getScrollDelta()))
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), event.getScrollDelta(), 0))
         {
             event.setCanceled(true);
         }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
+import net.minecraft.client.gui.screens.Screen;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.screens.Screen;
 import fi.dy.masa.malilib.config.ConfigManager;

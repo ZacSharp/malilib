@@ -1,7 +1,7 @@
 package fi.dy.masa.malilib.util;
 
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ItemType
 {
     private ItemStack stack;
-    private boolean checkNBT;
+    private final boolean checkNBT;
 
     public ItemType(ItemStack stack)
     {
@@ -62,17 +62,14 @@ public class ItemType
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (this.getClass() != obj.getClass())
             return false;
 
         ItemType other = (ItemType) obj;
 
         if (this.stack.isEmpty() || other.stack.isEmpty())
         {
-            if (this.stack.isEmpty() != other.stack.isEmpty())
-            {
-                return false;
-            }
+            return this.stack.isEmpty() == other.stack.isEmpty();
         }
         else
         {
@@ -83,8 +80,6 @@ public class ItemType
 
             return this.checkNBT() == false || ItemStack.tagMatches(this.stack, other.stack);
         }
-
-        return true;
     }
 
     @Override
@@ -93,12 +88,11 @@ public class ItemType
         if (this.checkNBT())
         {
             ResourceLocation rl = ForgeRegistries.ITEMS.getKey(this.stack.getItem());
-            return rl.toString() + " " + this.stack.getTag();
+            return rl + " " + this.stack.getTag();
         }
         else
         {
-            ResourceLocation rl = ForgeRegistries.ITEMS.getKey(this.stack.getItem());
-            return rl.toString();
+            return ForgeRegistries.ITEMS.getKey(this.stack.getItem()).toString();
         }
     }
 }

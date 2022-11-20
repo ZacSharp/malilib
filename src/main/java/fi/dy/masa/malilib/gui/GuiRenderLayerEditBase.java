@@ -8,6 +8,7 @@ import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.gui.widgets.WidgetCheckBox;
+import fi.dy.masa.malilib.util.EntityUtils;
 import fi.dy.masa.malilib.util.LayerMode;
 import fi.dy.masa.malilib.util.LayerRange;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -87,7 +88,7 @@ public abstract class GuiRenderLayerEditBase extends GuiBase
 
         if (layerMode == LayerMode.LAYER_RANGE)
         {
-            this.textField2 = new GuiTextFieldInteger(x, y, width, 20, this.textRenderer);
+            this.textField2 = new GuiTextFieldInteger(x, y, width, 20, this.font);
             this.addTextField(this.textField2, new TextFieldListener(layerMode, layerRange, true));
 
             this.createHotkeyCheckBoxes(x + width + 24, y, layerRange);
@@ -100,7 +101,7 @@ public abstract class GuiRenderLayerEditBase extends GuiBase
             this.textField2 = null;
         }
 
-        this.textField1 = new GuiTextFieldInteger(x, y, width, 20, this.textRenderer);
+        this.textField1 = new GuiTextFieldInteger(x, y, width, 20, this.font);
         this.addTextField(this.textField1, new TextFieldListener(layerMode, layerRange, false));
         this.createValueAdjustButton(x + width + 3, y, false, layerRange, valueAdjustIcon);
         y += 23;
@@ -160,9 +161,9 @@ public abstract class GuiRenderLayerEditBase extends GuiBase
                 axis = Direction.Axis.values()[next % 3];
                 this.layerRange.setAxis(axis);
             }
-            else if (this.type == Type.SET_HERE)
+            else if (this.type == Type.SET_HERE && this.parent.mc.player != null)
             {
-                this.layerRange.setToPosition(this.parent.mc.player);
+                this.layerRange.setSingleBoundaryToPosition(EntityUtils.getCameraEntity());
             }
 
             this.parent.initGui();

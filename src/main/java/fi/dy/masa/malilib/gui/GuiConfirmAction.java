@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screens.Screen;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
@@ -93,8 +92,8 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
             this.getParent().render(matrixStack, mouseX, mouseY, partialTicks);
         }
 
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(0, 0, this.getBlitOffset());
+        matrixStack.pushPose();
+        matrixStack.translate(0, 0, this.getBlitOffset());
 
         RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xF0000000, COLOR_HORIZONTAL_BAR);
 
@@ -109,7 +108,7 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
         }
 
         this.drawButtons(mouseX, mouseY, partialTicks, matrixStack);
-        RenderSystem.popMatrix();
+        matrixStack.popPose();
     }
 
     protected ButtonListener createActionListener(ButtonType type)
@@ -182,7 +181,7 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
 
         private final String labelKey;
 
-        private ButtonType(String labelKey)
+        ButtonType(String labelKey)
         {
             this.labelKey = labelKey;
         }

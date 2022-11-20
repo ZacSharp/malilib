@@ -1,6 +1,7 @@
 package fi.dy.masa.malilib.gui;
 
 import javax.annotation.Nullable;
+import net.minecraft.client.gui.screens.Screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.config.IConfigStringList;
@@ -12,8 +13,6 @@ import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.malilib.util.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 
 public class GuiStringListEdit extends GuiListBase<String, WidgetStringListEditEntry, WidgetListStringListEdit>
 {
@@ -71,20 +70,13 @@ public class GuiStringListEdit extends GuiListBase<String, WidgetStringListEditE
     }
 
     @Override
-    public void init(Minecraft mc, int width, int height)
+    public void initGui()
     {
-        if (this.getParent() != null)
-        {
-            this.getParent().init(mc, width, height);
-        }
-
-        super.init(mc, width, height);
-
         this.setWidthAndHeight();
         this.centerOnScreen();
-
         this.reCreateListWidget();
-        this.initGui();
+
+        super.initGui();
     }
 
     public IConfigStringList getConfig()

@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.gui.button;
 import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 import org.apache.commons.lang3.StringUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
