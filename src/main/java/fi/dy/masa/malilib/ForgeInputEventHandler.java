@@ -35,7 +35,7 @@ class ForgeInputEventHandler
     @SubscribeEvent
     public void onMouseScrollEvent(InputEvent.MouseScrollEvent event)
     {
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), event.getScrollDelta(), 0))
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), 0, event.getScrollDelta()))
         {
             event.setCanceled(true);
         }
