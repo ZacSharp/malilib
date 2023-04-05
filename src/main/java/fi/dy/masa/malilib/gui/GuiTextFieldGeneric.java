@@ -78,6 +78,16 @@ public class GuiTextFieldGeneric extends EditBox
         }
     }
 
+    public void setCursorPositionZero()
+    {
+        this.moveCursorToStart();
+    }
+
+    public void setCursorPositionEnd()
+    {
+        this.moveCursorToEnd();
+    }
+
     public GuiTextFieldGeneric setZLevel(int zLevel)
     {
         this.setBlitOffset(zLevel);
