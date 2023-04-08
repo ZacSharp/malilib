@@ -76,13 +76,13 @@ public abstract class GuiListBase<TYPE, WIDGET extends WidgetListEntryBase<TYPE>
     }
 
     @Override
-    public void removed()
+    public void onClose()
     {
-        super.removed();
+        super.onClose();
 
         if (this.getListWidget() != null)
         {
-            this.getListWidget().removed();
+            this.getListWidget().onClose();
         }
     }
 

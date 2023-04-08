@@ -122,7 +122,7 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
     }
 
     @Override
-    public void removed()
+    public void onClose()
     {
         if (this.getListWidget().wereConfigsModified())
         {

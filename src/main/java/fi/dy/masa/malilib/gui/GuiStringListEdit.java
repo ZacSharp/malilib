@@ -112,7 +112,7 @@ public class GuiStringListEdit extends GuiListBase<String, WidgetStringListEditE
     }
 
     @Override
-    public void removed()
+    public void onClose()
     {
         if (this.getListWidget().wereConfigsModified())
         {
@@ -120,7 +120,7 @@ public class GuiStringListEdit extends GuiListBase<String, WidgetStringListEditE
             ConfigManager.getInstance().onConfigsChanged(this.configGui.getModId());
         }
 
-        super.removed();
+        super.onClose();
     }
 
     @Override

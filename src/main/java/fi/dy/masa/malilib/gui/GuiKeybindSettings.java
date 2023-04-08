@@ -110,7 +110,7 @@ public class GuiKeybindSettings extends GuiDialogBase
     }
 
     @Override
-    public void removed()
+    public void onClose()
     {
         KeyAction activateOn = (KeyAction) this.cfgActivateOn.getOptionListValue();
         KeybindSettings.Context context = (KeybindSettings.Context) this.cfgContext.getOptionListValue();
@@ -123,7 +123,7 @@ public class GuiKeybindSettings extends GuiDialogBase
         KeybindSettings settingsNew = KeybindSettings.create(context, activateOn, allowExtraKeys, orderSensitive, exclusive, cancel, allowEmpty);
         this.keybind.setSettings(settingsNew);
 
-        super.removed();
+        super.onClose();
     }
 
     @Override

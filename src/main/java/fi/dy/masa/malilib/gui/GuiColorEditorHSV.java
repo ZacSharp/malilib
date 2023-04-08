@@ -146,11 +146,11 @@ public class GuiColorEditorHSV extends GuiDialogBase
     }
 
     @Override
-    public void removed()
+    public void onClose()
     {
         this.config.setIntegerValue(this.color);
 
-        super.removed();
+        super.onClose();
     }
 
     @Override
