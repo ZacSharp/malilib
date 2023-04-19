@@ -11,7 +11,7 @@ modLoader="javafml" #mandatory
 loaderVersion="[32,)" #mandatory (26 is current forge version)
 
 # A URL to refer people to when problems occur with this mod
-issueTrackerURL="https://github.com/maruohon/malilib/issues" #optional
+issueTrackerURL="https://github.com/ZacSharp/malilib-forge/issues" #optional
 
 license="GNU General Public License v3.0"
 
@@ -31,7 +31,7 @@ license="GNU General Public License v3.0"
     #updateJSONURL="http://myurl.me/" #optional
 
     # A URL for the "homepage" for this mod, displayed in the mod UI
-    displayURL="https://www.curseforge.com/minecraft/mc-mods/malilib" #optional
+    displayURL="https://github.com/ZacSharp/malilib-forge" #optional
 
     # A file name (in the root of the mod JAR) containing a logo for display
     #logoFile="examplemod.png" #optional
@@ -43,7 +43,10 @@ license="GNU General Public License v3.0"
     authors="masa" #optional
 
     # The description text for the mod (multi line!) (#mandatory)
-    description='''A library mod required for many of masa's client-side mods'''
+    description='''A library mod required for many of masa's client-side mods
+Note that this is not an official version of MaLiLib so please DO NOT report problems to masa.
+Instead, report them at https://github.com/ZacSharp/malilib-forge/issues.
+'''
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.malilib]] #optional
